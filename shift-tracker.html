@@ -146,6 +146,12 @@
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
     align-items: flex-end;
+    width: 100%;
+  }
+
+  .form-row .field {
+    min-width: 0;
+    overflow: hidden;
   }
 
   .field { display: flex; flex-direction: column; gap: 6px; }
@@ -160,6 +166,8 @@
     outline: none;
     transition: border-color 0.15s;
     width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .field input:focus { border-color: var(--gold); }
 
@@ -385,9 +393,18 @@
     .container { padding: 20px 14px 60px; }
     .tab-bar { padding: 0 8px; }
     .tab-btn { padding: 11px 12px 9px; font-size: 0.63rem; letter-spacing: 0.1em; }
-    .form-section { padding: 18px 16px 16px; }
+    .form-section { padding: 18px 16px 16px; overflow: hidden; }
     .month-nav { margin-bottom: 20px; }
     .annual-header { margin-bottom: 20px; }
+    .field input[type="date"] {
+      font-size: 0.75rem;
+      padding: 10px 6px;
+      width: 100%;
+      min-width: 0;
+    }
+    .field input[type="number"] {
+      font-size: 0.85rem;
+    }
   }
 </style>
 </head>
