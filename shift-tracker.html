@@ -199,6 +199,16 @@
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
 
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -14px;
+    padding: 0 14px;
+  }
+  .table-scroll table {
+    min-width: 520px;
+  }
+
   table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
   thead th {
     font-size: 0.63rem; letter-spacing: 0.14em; text-transform: uppercase;
@@ -490,6 +500,7 @@
   </div>
 
   <div class="section-label">Shifts this month</div>
+  <div class="table-scroll">
   <table>
     <thead>
       <tr>
@@ -504,6 +515,7 @@
     </thead>
     <tbody id="shift-body"></tbody>
   </table>
+  </div>
 
 </div>
 </div>
@@ -548,6 +560,7 @@
 
   <!-- Monthly breakdown -->
   <div class="section-label">Month by month</div>
+  <div class="table-scroll">
   <table class="ann-table">
     <thead>
       <tr>
@@ -560,6 +573,7 @@
     </thead>
     <tbody id="annual-body"></tbody>
   </table>
+  </div>
 
 </div>
 </div>
