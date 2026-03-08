@@ -59,51 +59,20 @@
     text-transform: uppercase;
   }
 
-  .data-toolbar {
-    background: #251e10;
-    padding: 10px 40px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid #3a3020;
-    flex-wrap: wrap;
-  }
 
-  .toolbar-label {
-    font-size: 0.63rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #7a6e5a;
-    margin-right: 4px;
-  }
 
-  .btn-toolbar {
-    background: none;
-    border: 1px solid #4a4030;
-    color: #c8bfa8;
-    padding: 5px 14px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn-toolbar:hover { border-color: var(--gold); color: var(--gold-light); }
-  .btn-toolbar.import { color: #8cb88a; border-color: #3a5038; }
-  .btn-toolbar.import:hover { border-color: var(--sage); color: #b8dbb6; background: rgba(74,103,65,0.15); }
 
   .autosave-indicator {
     margin-left: auto;
-    font-size: 0.63rem;
+    font-size: 0.65rem;
     letter-spacing: 0.1em;
-    color: #4a4030;
+    color: #5a5040;
     text-transform: uppercase;
     transition: color 0.4s;
+    font-family: 'DM Mono', monospace;
   }
   .autosave-indicator.saved { color: var(--sage); }
 
-  #csv-file-input { display: none; }
 
   .container {
     max-width: 900px;
@@ -409,14 +378,16 @@
   @media (max-width: 640px) {
     .summary { grid-template-columns: repeat(2, 1fr); }
     .ytd-cards { grid-template-columns: repeat(2, 1fr); }
-    .form-row { grid-template-columns: 1fr 1fr; }
-    header { padding: 16px 20px; }
-    header h1 { font-size: 1.3rem; }
+    .form-row { grid-template-columns: 1fr; }
+    header { padding: 14px 16px; }
+    header h1 { font-size: 1.2rem; }
     header span { display: none; }
-    .data-toolbar { padding: 8px 16px; }
-    .container { padding: 24px 16px 60px; }
-    .tab-bar { padding: 0 12px; }
-    .tab-btn { padding: 12px 14px 10px; font-size: 0.65rem; }
+    .container { padding: 20px 14px 60px; }
+    .tab-bar { padding: 0 8px; }
+    .tab-btn { padding: 11px 12px 9px; font-size: 0.63rem; letter-spacing: 0.1em; }
+    .form-section { padding: 18px 16px 16px; }
+    .month-nav { margin-bottom: 20px; }
+    .annual-header { margin-bottom: 20px; }
   }
 </style>
 </head>
@@ -425,21 +396,14 @@
 <div class="top-chrome">
 <header>
   <h1>Shift Tracker</h1>
-  <span>Tipping wages ledger</span>
-</header>
-
-<div class="data-toolbar">
-  <span class="toolbar-label">Data</span>
-  <button class="btn-toolbar import" onclick="triggerImport()">↑ Import CSV</button>
-  <button class="btn-toolbar" onclick="exportCSV()">↓ Export CSV</button>
-  <input type="file" id="csv-file-input" accept=".csv" onchange="handleFileImport(event)">
   <span class="autosave-indicator" id="autosave-indicator">● autosaved</span>
-</div>
+</header>
 
 <!-- Tab bar -->
 <div class="tab-bar">
   <button class="tab-btn active" id="tab-btn-shifts" onclick="switchTab('shifts', this)">Monthly Shifts</button>
   <button class="tab-btn" id="tab-btn-annual" onclick="switchTab('annual', this)">Annual Summary</button>
+  <button class="tab-btn" id="tab-btn-data" onclick="switchTab('data', this)">Data</button>
 </div>
 </div>
 
@@ -579,6 +543,40 @@
     </thead>
     <tbody id="annual-body"></tbody>
   </table>
+
+</div>
+</div>
+
+<!-- ── Data tab ── -->
+<div id="tab-data" class="tab-panel">
+<div class="container">
+
+  <div class="section-label">Import &amp; Export</div>
+
+  <div class="form-section">
+    <div class="form-title">Export your data</div>
+    <p style="font-size:0.8rem;color:#5a4e3a;line-height:1.6;margin-bottom:16px;">
+      Download all your shifts as a CSV file. Open it in Excel or Google Sheets, or use it to move your data to another device.
+    </p>
+    <button class="btn-add" style="max-width:280px;" onclick="exportCSV()">↓ Download CSV</button>
+  </div>
+
+  <div class="form-section" style="margin-top:0;">
+    <div class="form-title">Import from CSV</div>
+    <p style="font-size:0.8rem;color:#5a4e3a;line-height:1.6;margin-bottom:16px;">
+      Load shifts from a previously exported CSV file. You can replace all existing data or merge the file with your current shifts (duplicates will be skipped).
+    </p>
+    <button class="btn-add" style="max-width:280px;" onclick="triggerImport()">↑ Choose CSV File</button>
+    <input type="file" id="csv-file-input" accept=".csv" onchange="handleFileImport(event)" style="display:none;">
+  </div>
+
+  <div class="form-section" style="margin-top:0; border-top-color: var(--rust);">
+    <div class="form-title" style="color:var(--rust);">Clear all data</div>
+    <p style="font-size:0.8rem;color:#5a4e3a;line-height:1.6;margin-bottom:16px;">
+      Permanently delete all shifts from this browser. Export a backup first if needed.
+    </p>
+    <button class="btn-add" style="max-width:280px;background:var(--rust);color:#fff;" onclick="clearAllData()">✕ Clear All Shifts</button>
+  </div>
 
 </div>
 </div>
@@ -778,6 +776,14 @@
   function closeModal() {
     document.getElementById('import-modal').classList.remove('show');
     pendingImportData = null;
+  }
+
+  function clearAllData() {
+    if (!confirm('Delete all shifts permanently? Make sure you have exported a backup.')) return;
+    shifts = [];
+    persist();
+    render();
+    showToast('All shifts cleared.');
   }
 
   function confirmImport() {
