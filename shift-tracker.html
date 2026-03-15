@@ -182,7 +182,7 @@
     max-height: 0;
     transition: max-height var(--dur-slow) var(--ease-out);
   }
-  .log-form-wrap.open { max-height: 320px; }
+  .log-form-wrap.open { max-height: 380px; }
 
   .log-form {
     background: var(--surface);
@@ -197,6 +197,8 @@
 
   .field { display: flex; flex-direction: column; gap: 5px; }
   .field.full { grid-column: 1 / -1; }
+  /* Date always spans full width; hours+tips sit side by side below */
+  #inp-date { grid-column: 1 / -1; }
 
   .field label {
     font-size: 0.68rem;
@@ -896,8 +898,21 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ══════════════════════════════════════════
-     ANIMATIONS
+     SWIPE TRANSITIONS
   ══════════════════════════════════════════ */
+  .swipe-area {
+    touch-action: pan-y;
+    user-select: none;
+  }
+  .month-content {
+    transition: opacity 160ms ease, transform 160ms var(--ease-out);
+  }
+  .month-content.slide-out-left  { opacity: 0; transform: translateX(-18px); }
+  .month-content.slide-out-right { opacity: 0; transform: translateX(18px); }
+  .month-content.slide-in-left   { opacity: 0; transform: translateX(18px); }
+  .month-content.slide-in-right  { opacity: 0; transform: translateX(-18px); }
+
+
   @media (prefers-reduced-motion: no-preference) {
     .shift-row {
       animation: row-in 0.3s var(--ease-out) both;
@@ -963,7 +978,7 @@
   </button>
   <div class="log-form-wrap" id="log-form-wrap">
     <div class="log-form">
-      <div class="field">
+      <div class="field full">
         <label>Date</label>
         <input type="date" id="inp-date">
       </div>
@@ -981,13 +996,16 @@
 
   <!-- Month navigation -->
   <div class="month-nav">
-    <button class="month-nav-btn" onclick="prevMonth()">&#8592;</button>
+    <button class="month-nav-btn" onclick="navigateMonth(-1)">&#8592;</button>
     <div class="month-title">
       <span class="month-name" id="month-name"></span>
       <span class="month-year" id="month-year"></span>
     </div>
-    <button class="month-nav-btn" onclick="nextMonth()">&#8594;</button>
+    <button class="month-nav-btn" onclick="navigateMonth(1)">&#8594;</button>
   </div>
+
+  <div class="swipe-area" id="swipe-area">
+  <div class="month-content" id="month-content">
 
   <!-- Summary — hero + supporting -->
   <div class="summary-grid">
@@ -1019,6 +1037,9 @@
     <div class="list-count" id="shift-count">0</div>
   </div>
   <div class="shift-list" id="shift-list"></div>
+
+  </div><!-- end month-content -->
+  </div><!-- end swipe-area -->
 
 </div>
 </div>
@@ -1182,9 +1203,49 @@
     showToast('Removed.');
   }
 
-  // ── Month nav ─────────────────────────────────────────────
-  function prevMonth() { if (--viewMonth < 0)  { viewMonth = 11; viewYear--; } render(); }
-  function nextMonth() { if (++viewMonth > 11) { viewMonth = 0;  viewYear++; } render(); }
+  // ── Month nav + swipe ─────────────────────────────────────
+  function navigateMonth(dir) {
+    const outClass = dir > 0 ? 'slide-out-left' : 'slide-out-right';
+    const inClass  = dir > 0 ? 'slide-in-left'  : 'slide-in-right';
+    const content  = document.getElementById('month-content');
+
+    content.classList.add(outClass);
+    setTimeout(() => {
+      if (dir > 0) { if (++viewMonth > 11) { viewMonth = 0; viewYear++; } }
+      else         { if (--viewMonth < 0)  { viewMonth = 11; viewYear--; } }
+      render();
+      content.classList.remove(outClass);
+      content.classList.add(inClass);
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        content.classList.remove(inClass);
+      }));
+    }, 160);
+  }
+
+  // Keep old names working (used nowhere else but safe to have)
+  function prevMonth() { navigateMonth(-1); }
+  function nextMonth() { navigateMonth(1); }
+
+  // Touch swipe on the month content area
+  (function() {
+    let tx = 0, ty = 0, locked = false;
+    const el = document.getElementById('swipe-area');
+    el.addEventListener('touchstart', e => {
+      tx = e.touches[0].clientX;
+      ty = e.touches[0].clientY;
+      locked = false;
+    }, { passive: true });
+    el.addEventListener('touchmove', e => {
+      if (locked) return;
+      const dx = e.touches[0].clientX - tx;
+      const dy = e.touches[0].clientY - ty;
+      // Only trigger if more horizontal than vertical (45° threshold)
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 12) {
+        locked = true;
+        navigateMonth(dx < 0 ? 1 : -1);
+      }
+    }, { passive: true });
+  })();
 
   function monthShifts() {
     return shifts.filter(s => {
