@@ -3,380 +3,448 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f3ee">
 <title>Shift Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #1a1208;
-    --paper: #f5f0e8;
-    --cream: #ede7d5;
-    --gold: #c9982a;
-    --gold-light: #e8c96a;
-    --rust: #b84a2e;
-    --sage: #4a6741;
-    --rule: #c8bfa8;
+    --bg:           #f7f3ee;
+    --surface:      #ffffff;
+    --surface-2:    #f0ece6;
+    --border:       rgba(60, 45, 25, 0.12);
+    --border-strong:rgba(60, 45, 25, 0.22);
+    --text:         #2a2018;
+    --text-muted:   #8a7d6a;
+    --text-subtle:  #b5a894;
+    --accent:       #3d8b74;
+    --accent-light: #eaf4f0;
+    --accent-hover: #306e5c;
+    --accent-rgb:   61, 139, 116;
+    --gold:         #c4841a;
+    --gold-light:   #fdf3e3;
+    --danger:       #c0442a;
+    --danger-light: #fdf0ed;
+    --success:      #3d8b74;
+
+    --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-fast:     120ms;
+    --dur-base:     220ms;
+    --dur-slow:     360ms;
+
+    --radius-sm:    8px;
+    --radius-md:    12px;
+    --radius-lg:    16px;
+    --radius-xl:    20px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'DM Mono', monospace;
-    background: var(--paper);
-    color: var(--ink);
+    font-family: 'Figtree', sans-serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
-    background-image: repeating-linear-gradient(0deg, transparent, transparent 27px, var(--rule) 27px, var(--rule) 28px);
-    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    touch-action: manipulation;
   }
 
+  /* ── Top chrome ─────────────────────────────────────────── */
   .top-chrome {
     position: sticky;
     top: 0;
     z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(247, 243, 238, 0.92);
   }
 
   header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 28px 40px 24px;
-    display: flex;
-    align-items: baseline;
-    gap: 20px;
-    border-bottom: 4px solid var(--gold);
-  }
-
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    color: var(--gold-light);
-  }
-
-  header span {
-    font-size: 0.72rem;
-    color: var(--rule);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-
-
-
-  .autosave-indicator {
-    margin-left: auto;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    color: #5a5040;
-    text-transform: uppercase;
-    transition: color 0.4s;
-    font-family: 'DM Mono', monospace;
-  }
-  .autosave-indicator.saved { color: var(--sage); }
-
-
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 36px 24px 60px;
-  }
-
-  .month-nav {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 28px;
+    padding: 16px 24px 0;
+    max-width: 860px;
+    margin: 0 auto;
   }
 
-  .month-nav button {
-    background: none;
-    border: 1.5px solid var(--ink);
-    width: 32px; height: 32px;
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    font-size: 1rem;
-    color: var(--ink);
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
-  }
-  .month-nav button:hover { background: var(--ink); color: var(--paper); }
-
-  .month-label {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    min-width: 200px;
+  .app-wordmark {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.45rem;
+    color: var(--text);
+    letter-spacing: -0.2px;
+    line-height: 1;
   }
 
-  .summary {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 32px;
+  .app-wordmark em {
+    font-style: italic;
+    color: var(--accent);
   }
 
-  .card {
-    background: var(--cream);
-    border: 1.5px solid var(--rule);
-    padding: 16px 18px;
+  .autosave-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--text-subtle);
+    transition: background var(--dur-base) ease;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .autosave-dot.saved { background: var(--success); }
+
+  /* ── Tab bar ────────────────────────────────────────────── */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    padding: 10px 24px;
+    max-width: 860px;
+    margin: 0 auto;
     position: relative;
-    overflow: hidden;
   }
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px; height: 100%;
-    background: var(--gold);
-  }
-  .card-label { font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: #7a6e5a; margin-bottom: 6px; }
-  .card-value { font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700; color: var(--ink); line-height: 1; }
-  .card-sub { font-size: 0.68rem; color: #7a6e5a; margin-top: 4px; }
 
-  .form-section {
-    background: var(--cream);
-    border: 1.5px solid var(--rule);
-    border-top: 3px solid var(--gold);
-    padding: 24px 24px 20px;
-    margin-bottom: 32px;
+  .tab-btn {
+    position: relative;
+    background: none;
+    border: none;
+    padding: 7px 16px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: color var(--dur-fast) ease, background var(--dur-fast) ease;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
   }
-  .form-title { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 500; }
+  .tab-btn:hover { color: var(--text); background: var(--surface-2); }
+  .tab-btn.active {
+    color: var(--accent);
+    background: var(--accent-light);
+    font-weight: 600;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+
+  /* ── Log form card ───────────────────────────────────────── */
+  .log-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 2px 12px rgba(var(--accent-rgb), 0.06);
+  }
+
+  .log-card-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
 
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
     align-items: flex-end;
-    width: 100%;
   }
 
-  .form-row .field {
-    min-width: 0;
-    overflow: hidden;
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: #7a6e5a; }
+  .field label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+  }
+
   .field input {
-    background: var(--paper);
-    border: 1.5px solid var(--rule);
-    padding: 10px 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--ink);
+    background: var(--surface-2);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 11px 14px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text);
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color var(--dur-fast) ease, background var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
     width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
   }
-  .field input:focus { border-color: var(--gold); }
+  .field input:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
+  }
+  .field input::placeholder { color: var(--text-subtle); }
 
   .btn-add {
-    background: var(--ink);
-    color: var(--gold-light);
+    background: var(--accent);
+    color: #fff;
     border: none;
-    padding: 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.82rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    border-radius: var(--radius-sm);
+    padding: 12px 20px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: background var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast) ease;
     width: 100%;
     grid-column: 1 / -1;
+    box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.28);
+    letter-spacing: 0.01em;
   }
-  .btn-add:hover { background: var(--gold); color: var(--ink); }
+  .btn-add:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.34);
+  }
+  .btn-add:active { transform: scale(0.98); }
 
-  .section-label {
+  /* ── Month nav ───────────────────────────────────────────── */
+  .month-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .month-label {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.55rem;
+    letter-spacing: -0.3px;
+    flex: 1;
+  }
+
+  .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--border-strong); }
+
+  /* ── Summary cards ───────────────────────────────────────── */
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow var(--dur-base) ease;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+
+  .card-label {
     font-size: 0.68rem;
-    letter-spacing: 0.16em;
+    font-weight: 600;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: #7a6e5a;
+    color: var(--text-subtle);
+    margin-bottom: 8px;
+  }
+
+  .card-value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.65rem;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .card-sub {
+    font-size: 0.68rem;
+    color: var(--text-subtle);
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  /* accent card variant */
+  .card.accent {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .card.accent .card-label { color: rgba(255,255,255,0.65); }
+  .card.accent .card-value { color: #fff; }
+  .card.accent .card-sub   { color: rgba(255,255,255,0.55); }
+
+  /* ── Section divider ─────────────────────────────────────── */
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
     margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
 
+  /* ── Shifts table ────────────────────────────────────────── */
   .table-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    margin: 0 -14px;
-    padding: 0 14px;
-  }
-  .table-scroll table {
-    min-width: 520px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
   }
 
-  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 480px; }
+
   thead th {
-    font-size: 0.63rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: #7a6e5a; text-align: left; padding: 8px 12px;
-    border-bottom: 1.5px solid var(--ink); font-weight: 500;
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
   }
   thead th:not(:first-child) { text-align: right; }
-  tbody tr { border-bottom: 1px solid var(--rule); transition: background 0.1s; }
-  tbody tr:hover { background: rgba(201,152,42,0.07); }
-  tbody td { padding: 11px 12px; vertical-align: middle; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background var(--dur-fast) ease;
+    position: relative;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--accent-light); }
+
+  tbody td {
+    padding: 13px 16px;
+    vertical-align: middle;
+    font-weight: 500;
+  }
   tbody td:not(:first-child) { text-align: right; }
-  .td-date { font-weight: 500; }
-  .td-green { color: var(--sage); font-weight: 500; }
-  .td-gold { color: var(--gold); font-weight: 500; }
+
+  .td-date { font-weight: 600; color: var(--text); }
+  .td-tips { color: var(--accent); font-weight: 600; }
+  .td-total { color: var(--text); font-weight: 600; }
+  .td-muted { color: var(--text-muted); }
 
   .btn-del {
-    background: none; border: 1px solid var(--rule); color: #999;
-    font-size: 0.7rem; padding: 3px 8px; cursor: pointer;
-    font-family: 'DM Mono', monospace; transition: all 0.15s;
-  }
-  .btn-del:hover { border-color: var(--rust); color: var(--rust); }
-  .no-shifts { text-align: center; padding: 40px; color: #999; font-size: 0.82rem; letter-spacing: 0.08em; }
-
-  /* Modal */
-  .modal-bg {
-    display: none; position: fixed; inset: 0;
-    background: rgba(26,18,8,0.65); z-index: 200;
-    align-items: center; justify-content: center;
-  }
-  .modal-bg.show { display: flex; }
-  .modal {
-    background: var(--cream); border: 2px solid var(--ink);
-    border-top: 4px solid var(--gold); padding: 32px 28px 24px;
-    max-width: 440px; width: 90%;
-  }
-  .modal h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 10px; }
-  .modal p { font-size: 0.8rem; color: #5a4e3a; line-height: 1.6; margin-bottom: 20px; }
-  .modal-btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
-  .btn-modal {
-    border: 1.5px solid var(--ink); background: none;
-    padding: 8px 18px; font-family: 'DM Mono', monospace;
-    font-size: 0.75rem; letter-spacing: 0.08em;
-    text-transform: uppercase; cursor: pointer; transition: all 0.15s;
-  }
-  .btn-modal:hover { background: var(--ink); color: var(--paper); }
-  .btn-modal.danger { border-color: var(--rust); color: var(--rust); }
-  .btn-modal.danger:hover { background: var(--rust); color: var(--paper); }
-  .btn-modal.primary { background: var(--ink); color: var(--gold-light); border-color: var(--ink); }
-  .btn-modal.primary:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
-
-  .toast {
-    position: fixed; bottom: 28px; right: 28px;
-    background: var(--ink); color: var(--gold-light);
-    padding: 12px 20px; font-size: 0.78rem; letter-spacing: 0.08em;
-    border-left: 3px solid var(--gold);
-    opacity: 0; transform: translateY(10px);
-    transition: opacity 0.3s, transform 0.3s;
-    pointer-events: none; z-index: 999;
-  }
-  .toast.show { opacity: 1; transform: translateY(0); }
-
-  /* ── Tabs ───────────────────────────────────────────────── */
-  .tab-bar {
-    background: var(--cream);
-    border-bottom: 2px solid var(--ink);
-    display: flex;
-    padding: 0 24px;
-  }
-
-  .tab-btn {
     background: none;
-    border: none;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    padding: 14px 22px 12px;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #7a6e5a;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--text-subtle);
+    font-size: 0.75rem;
+    padding: 4px 9px;
     cursor: pointer;
-    transition: color 0.15s, border-color 0.15s;
+    font-family: 'Figtree', sans-serif;
+    font-weight: 500;
+    transition: all var(--dur-fast) ease;
+    min-width: 44px;
+    min-height: 30px;
   }
-  .tab-btn:hover { color: var(--ink); }
-  .tab-btn.active { color: var(--ink); border-bottom-color: var(--gold); font-weight: 500; }
+  .btn-del:hover {
+    background: var(--danger-light);
+    border-color: rgba(192, 68, 42, 0.2);
+    color: var(--danger);
+  }
 
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+  .no-shifts {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-subtle);
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+  .no-shifts-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
 
-  /* ── Annual summary ─────────────────────────────────────── */
+  /* ── Annual view ─────────────────────────────────────────── */
   .annual-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
+    gap: 12px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
   }
 
   .annual-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.55rem;
+    letter-spacing: -0.3px;
+    flex: 1;
   }
 
   .year-nav {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
   }
-
-  .year-nav button {
-    background: none;
-    border: 1.5px solid var(--ink);
-    width: 28px; height: 28px;
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--ink);
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.15s, color 0.15s;
-  }
-  .year-nav button:hover { background: var(--ink); color: var(--paper); }
 
   .year-display {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
     min-width: 44px;
     text-align: center;
+    color: var(--text);
   }
 
-  /* YTD summary cards */
   .ytd-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 32px;
+    gap: 10px;
+    margin-bottom: 28px;
   }
 
-  .ytd-card {
-    background: var(--ink);
-    border: 1.5px solid var(--ink);
-    padding: 16px 18px;
-    position: relative;
-    overflow: hidden;
+  /* dark variant for annual cards */
+  .card.dark {
+    background: var(--text);
+    border-color: var(--text);
   }
-  .ytd-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 4px; height: 100%;
-    background: var(--gold);
+  .card.dark .card-label { color: rgba(247,243,238,0.45); }
+  .card.dark .card-value { color: #f7f3ee; }
+  .card.dark .card-sub   { color: rgba(247,243,238,0.35); }
+
+  .ann-table tbody tr.best-month .td-total {
+    color: var(--gold);
   }
-  .ytd-card .card-label { color: #7a6e5a; }
-  .ytd-card .card-value { color: var(--gold-light); }
-  .ytd-card .card-sub   { color: #5a5040; }
-
-  /* Monthly comparison table */
-  .ann-table thead th { border-bottom-color: var(--ink); }
-
-  .ann-table tbody tr.best-month td.ann-total { color: var(--gold); font-weight: 700; }
   .ann-table tbody tr.total-row {
-    border-top: 2px solid var(--ink);
-    background: var(--cream);
-    font-weight: 500;
+    background: var(--surface-2);
+    font-weight: 600;
   }
-  .ann-table tbody tr.total-row td { padding-top: 13px; padding-bottom: 13px; }
+  .ann-table tbody tr.total-row:hover { background: var(--surface-2); }
 
   .month-bar-wrap {
     display: flex;
@@ -385,58 +453,257 @@
     justify-content: flex-end;
   }
   .month-bar {
-    height: 6px;
-    background: var(--gold);
-    border-radius: 1px;
+    height: 5px;
+    background: var(--accent);
+    border-radius: 3px;
     min-width: 2px;
-    transition: width 0.4s ease;
+    opacity: 0.6;
+    transition: width 0.4s var(--ease-out);
   }
-  .no-data-row { text-align: center; padding: 40px; color: #999; font-size: 0.82rem; letter-spacing: 0.08em; }
+  .best-month .month-bar { opacity: 1; background: var(--gold); }
 
+  .no-data-row {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-subtle);
+    font-size: 0.88rem;
+    font-weight: 500;
+  }
+
+  /* ── Data tab ────────────────────────────────────────────── */
+  .data-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    margin-bottom: 12px;
+  }
+
+  .data-section-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .data-section-desc {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+    font-weight: 400;
+  }
+
+  .data-section.danger-zone {
+    border-color: rgba(192, 68, 42, 0.2);
+    background: var(--danger-light);
+  }
+  .data-section.danger-zone .data-section-title { color: var(--danger); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    padding: 11px 18px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
+    letter-spacing: 0.01em;
+  }
+  .btn-secondary:hover { background: var(--bg); border-color: var(--text-muted); }
+  .btn-secondary:active { transform: scale(0.98); }
+
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--danger);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 18px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
+  }
+  .btn-danger:hover { opacity: 0.88; }
+  .btn-danger:active { transform: scale(0.98); }
+
+  /* ── Modal ───────────────────────────────────────────────── */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 32, 24, 0.5);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .modal-bg.show { display: flex; }
+
+  @media (min-width: 500px) {
+    .modal-bg { align-items: center; }
+  }
+
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    padding: 32px 28px 36px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+    animation: modal-up var(--dur-slow) var(--ease-out) both;
+  }
+
+  @media (min-width: 500px) {
+    .modal {
+      border-radius: var(--radius-xl);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+    }
+  }
+
+  @keyframes modal-up {
+    from { transform: translateY(24px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--border-strong);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+    display: block;
+  }
+
+  @media (min-width: 500px) { .modal-handle { display: none; } }
+
+  .modal h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+  }
+
+  .modal p {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .btn-modal {
+    border: 1px solid var(--border-strong);
+    background: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 18px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text);
+    transition: background var(--dur-fast) ease;
+  }
+  .btn-modal:hover { background: var(--surface-2); }
+  .btn-modal.danger { border-color: rgba(192,68,42,0.3); color: var(--danger); }
+  .btn-modal.danger:hover { background: var(--danger-light); }
+  .btn-modal.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-modal.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  /* ── Toast ───────────────────────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--text);
+    color: #f7f3ee;
+    padding: 12px 20px;
+    border-radius: var(--radius-lg);
+    font-size: 0.84rem;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity var(--dur-base) ease, transform var(--dur-base) var(--ease-spring);
+    pointer-events: none;
+    z-index: 999;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── Animations ──────────────────────────────────────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    .card {
+      animation: fade-up 0.4s var(--ease-out) both;
+    }
+    .card:nth-child(1) { animation-delay: 0ms; }
+    .card:nth-child(2) { animation-delay: 40ms; }
+    .card:nth-child(3) { animation-delay: 80ms; }
+    .card:nth-child(4) { animation-delay: 120ms; }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  }
+
+  /* ── Responsive ──────────────────────────────────────────── */
   @media (max-width: 640px) {
-    .summary { grid-template-columns: repeat(2, 1fr); }
-    .ytd-cards { grid-template-columns: repeat(2, 1fr); }
+    .summary, .ytd-cards { grid-template-columns: repeat(2, 1fr); }
     .form-row { grid-template-columns: 1fr; }
-    header { padding: 14px 16px; }
-    header h1 { font-size: 1.2rem; }
-    header span { display: none; }
-    .container { padding: 20px 14px 60px; }
-    .tab-bar { padding: 0 8px; }
-    .tab-btn { padding: 11px 12px 9px; font-size: 0.63rem; letter-spacing: 0.1em; }
-    .form-section { padding: 18px 16px 16px; overflow: hidden; }
-    .month-nav { margin-bottom: 20px; }
-    .annual-header { margin-bottom: 20px; }
-    .field input[type="date"] {
-      font-size: 0.75rem;
-      padding: 10px 6px;
-      width: 100%;
-      min-width: 0;
-    }
-    .field input[type="number"] {
-      font-size: 0.85rem;
-    }
+    header { padding: 12px 16px 0; }
+    .tab-bar { padding: 8px 12px; gap: 2px; }
+    .tab-btn { padding: 7px 11px; font-size: 0.78rem; }
+    .container { padding: 20px 16px 80px; }
+    .log-card { padding: 20px 16px; }
+    .data-section { padding: 20px 16px; }
+    .modal { padding: 28px 20px 32px; }
+    .modal-btns { flex-direction: column; }
+    .modal-btns .btn-modal { width: 100%; text-align: center; }
+    .field input[type="date"] { font-size: 0.85rem; }
   }
 </style>
 </head>
 <body>
 
+<!-- Top chrome -->
 <div class="top-chrome">
-<header>
-  <h1>Shift Tracker</h1>
-  <span class="autosave-indicator" id="autosave-indicator">● autosaved</span>
-</header>
-
-<!-- Tab bar -->
-<div class="tab-bar">
-  <button class="tab-btn active" id="tab-btn-shifts" onclick="switchTab('shifts', this)">Monthly Shifts</button>
-  <button class="tab-btn" id="tab-btn-annual" onclick="switchTab('annual', this)">Annual Summary</button>
-  <button class="tab-btn" id="tab-btn-data" onclick="switchTab('data', this)">Data</button>
-</div>
+  <header>
+    <div class="app-wordmark">Shift <em>Tracker</em></div>
+    <div class="autosave-dot" id="autosave-dot" title="Autosaved"></div>
+  </header>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('shifts', this)">Monthly</button>
+    <button class="tab-btn" onclick="switchTab('annual', this)">Annual</button>
+    <button class="tab-btn" onclick="switchTab('data', this)">Data</button>
+  </div>
 </div>
 
 <!-- Import modal -->
 <div class="modal-bg" id="import-modal">
   <div class="modal">
+    <span class="modal-handle"></span>
     <h3>Import CSV</h3>
     <p id="import-modal-msg"></p>
     <div class="modal-btns">
@@ -451,8 +718,8 @@
 <div id="tab-shifts" class="tab-panel active">
 <div class="container">
 
-  <div class="form-section">
-    <div class="form-title">Log a shift</div>
+  <div class="log-card">
+    <div class="log-card-title">Log a shift</div>
     <div class="form-row">
       <div class="field">
         <label>Date</label>
@@ -471,9 +738,9 @@
   </div>
 
   <div class="month-nav">
-    <button onclick="prevMonth()">&#8592;</button>
+    <button class="nav-btn" onclick="prevMonth()">&#8592;</button>
     <div class="month-label" id="month-label"></div>
-    <button onclick="nextMonth()">&#8594;</button>
+    <button class="nav-btn" onclick="nextMonth()">&#8594;</button>
   </div>
 
   <div class="summary">
@@ -492,7 +759,7 @@
       <div class="card-value" id="s-tph">$0</div>
       <div class="card-sub">tip income only</div>
     </div>
-    <div class="card">
+    <div class="card accent">
       <div class="card-label">Total Pay</div>
       <div class="card-value" id="s-total">$0</div>
       <div class="card-sub">tips + $2.15/hr</div>
@@ -501,20 +768,20 @@
 
   <div class="section-label">Shifts this month</div>
   <div class="table-scroll">
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Hours</th>
-        <th>Tips</th>
-        <th>Tips/Hr</th>
-        <th>Wage Pay</th>
-        <th>Total Pay</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="shift-body"></tbody>
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Hours</th>
+          <th>Tips</th>
+          <th>Tips/Hr</th>
+          <th>Wage</th>
+          <th>Total</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="shift-body"></tbody>
+    </table>
   </div>
 
 </div>
@@ -525,54 +792,52 @@
 <div class="container">
 
   <div class="annual-header">
-    <div class="annual-title" id="annual-title">2025 Summary</div>
+    <div class="annual-title" id="annual-title">2026 Summary</div>
     <div class="year-nav">
-      <button onclick="prevYear()">&#8592;</button>
-      <div class="year-display" id="year-display">2025</div>
-      <button onclick="nextYear()">&#8594;</button>
+      <button class="nav-btn" onclick="prevYear()">&#8592;</button>
+      <div class="year-display" id="year-display">2026</div>
+      <button class="nav-btn" onclick="nextYear()">&#8594;</button>
     </div>
   </div>
 
-  <!-- YTD totals -->
   <div class="section-label">Year to date</div>
-  <div class="ytd-cards" style="margin-bottom:32px;">
-    <div class="ytd-card card">
+  <div class="ytd-cards">
+    <div class="card dark">
       <div class="card-label">Total Shifts</div>
       <div class="card-value" id="ytd-shifts">0</div>
       <div class="card-sub">all year</div>
     </div>
-    <div class="ytd-card card">
+    <div class="card dark">
       <div class="card-label">Total Hours</div>
       <div class="card-value" id="ytd-hours">0</div>
       <div class="card-sub">all year</div>
     </div>
-    <div class="ytd-card card">
+    <div class="card dark">
       <div class="card-label">Avg Tips/Hr</div>
       <div class="card-value" id="ytd-tph">$0</div>
       <div class="card-sub">tip income only</div>
     </div>
-    <div class="ytd-card card">
+    <div class="card dark">
       <div class="card-label">Total Pay</div>
       <div class="card-value" id="ytd-total">$0</div>
       <div class="card-sub">tips + $2.15/hr</div>
     </div>
   </div>
 
-  <!-- Monthly breakdown -->
   <div class="section-label">Month by month</div>
   <div class="table-scroll">
-  <table class="ann-table">
-    <thead>
-      <tr>
-        <th>Month</th>
-        <th>Shifts</th>
-        <th>Hours</th>
-        <th>Avg Tips/Hr</th>
-        <th>Total Pay</th>
-      </tr>
-    </thead>
-    <tbody id="annual-body"></tbody>
-  </table>
+    <table class="ann-table">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Shifts</th>
+          <th>Hours</th>
+          <th>Avg Tips/Hr</th>
+          <th>Total Pay</th>
+        </tr>
+      </thead>
+      <tbody id="annual-body"></tbody>
+    </table>
   </div>
 
 </div>
@@ -584,29 +849,29 @@
 
   <div class="section-label">Import &amp; Export</div>
 
-  <div class="form-section">
-    <div class="form-title">Export your data</div>
-    <p style="font-size:0.8rem;color:#5a4e3a;line-height:1.6;margin-bottom:16px;">
-      Download all your shifts as a CSV file. Open it in Excel or Google Sheets, or use it to move your data to another device.
-    </p>
-    <button class="btn-add" style="max-width:280px;" onclick="exportCSV()">↓ Download CSV</button>
+  <div class="data-section">
+    <div class="data-section-title">Export your data</div>
+    <p class="data-section-desc">Download all your shifts as a CSV file — use it in Excel, Google Sheets, or to back up and move your data.</p>
+    <button class="btn-secondary" onclick="exportCSV()">
+      <span>↓</span> Download CSV
+    </button>
   </div>
 
-  <div class="form-section" style="margin-top:0;">
-    <div class="form-title">Import from CSV</div>
-    <p style="font-size:0.8rem;color:#5a4e3a;line-height:1.6;margin-bottom:16px;">
-      Load shifts from a previously exported CSV file. You can replace all existing data or merge the file with your current shifts (duplicates will be skipped).
-    </p>
-    <button class="btn-add" style="max-width:280px;" onclick="triggerImport()">↑ Choose CSV File</button>
+  <div class="data-section">
+    <div class="data-section-title">Import from CSV</div>
+    <p class="data-section-desc">Load shifts from a previously exported CSV. You can replace all existing data or merge it in — duplicates are skipped automatically.</p>
+    <button class="btn-secondary" onclick="triggerImport()">
+      <span>↑</span> Choose CSV File
+    </button>
     <input type="file" id="csv-file-input" accept=".csv" onchange="handleFileImport(event)" style="display:none;">
   </div>
 
-  <div class="form-section" style="margin-top:0; border-top-color: var(--rust);">
-    <div class="form-title" style="color:var(--rust);">Clear all data</div>
-    <p style="font-size:0.8rem;color:#5a4e3a;line-height:1.6;margin-bottom:16px;">
-      Permanently delete all shifts from this browser. Export a backup first if needed.
-    </p>
-    <button class="btn-add" style="max-width:280px;background:var(--rust);color:#fff;" onclick="clearAllData()">✕ Clear All Shifts</button>
+  <div class="data-section danger-zone" style="margin-top: 28px;">
+    <div class="data-section-title">Clear all data</div>
+    <p class="data-section-desc">Permanently delete all shifts from this browser. Export a backup first if you need to keep your records.</p>
+    <button class="btn-danger" onclick="clearAllData()">
+      <span>✕</span> Clear All Shifts
+    </button>
   </div>
 
 </div>
@@ -632,14 +897,10 @@
   }
 
   function flashSaved() {
-    const el = document.getElementById('autosave-indicator');
-    el.textContent = '● saved';
-    el.classList.add('saved');
-    clearTimeout(el._t);
-    el._t = setTimeout(() => {
-      el.textContent = '● autosaved';
-      el.classList.remove('saved');
-    }, 1800);
+    const dot = document.getElementById('autosave-dot');
+    dot.classList.add('saved');
+    clearTimeout(dot._t);
+    dot._t = setTimeout(() => dot.classList.remove('saved'), 1800);
   }
 
   // ── Add / Delete ──────────────────────────────────────────
@@ -664,7 +925,7 @@
 
     persist();
     render();
-    showToast('Shift saved.');
+    showToast('Shift saved ✓');
   }
 
   function deleteShift(id) {
@@ -688,6 +949,7 @@
   // ── Render ────────────────────────────────────────────────
   const MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
+  const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const fmt$  = n => '$' + n.toFixed(2);
   const fmtH  = n => n % 1 === 0 ? n.toString() : n.toFixed(2);
 
@@ -707,7 +969,10 @@
 
     const tbody = document.getElementById('shift-body');
     if (ms.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="no-shifts">No shifts logged for this month.</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="7" class="no-shifts">
+        <div class="no-shifts-icon">📋</div>
+        No shifts logged for this month.
+      </td></tr>`;
       return;
     }
 
@@ -718,11 +983,11 @@
       const tphS  = s.hours > 0 ? s.tips / s.hours : 0;
       return `<tr>
         <td class="td-date">${dateStr}</td>
-        <td>${fmtH(s.hours)}</td>
-        <td class="td-green">${fmt$(s.tips)}</td>
-        <td>${fmt$(tphS)}</td>
-        <td>${fmt$(wage)}</td>
-        <td class="td-gold">${fmt$(s.tips + wage)}</td>
+        <td class="td-muted">${fmtH(s.hours)}</td>
+        <td class="td-tips">${fmt$(s.tips)}</td>
+        <td class="td-muted">${fmt$(tphS)}</td>
+        <td class="td-muted">${fmt$(wage)}</td>
+        <td class="td-total">${fmt$(s.tips + wage)}</td>
         <td><button class="btn-del" onclick="deleteShift(${s.id})">✕</button></td>
       </tr>`;
     }).join('');
@@ -853,7 +1118,6 @@
 
     const yearShifts = shifts.filter(s => s.date.startsWith(annualYear + ''));
 
-    // YTD totals
     const ytdHours = yearShifts.reduce((a, s) => a + s.hours, 0);
     const ytdTips  = yearShifts.reduce((a, s) => a + s.tips,  0);
     const ytdWage  = ytdHours * WAGE;
@@ -871,7 +1135,6 @@
       return;
     }
 
-    // Build per-month data
     const mm = {};
     for (let i = 0; i < 12; i++) mm[i] = { shifts: 0, hours: 0, tips: 0 };
     yearShifts.forEach(s => {
@@ -881,17 +1144,13 @@
       mm[mo].tips  += s.tips;
     });
 
-    // Find best month by total pay for highlighting
     let bestMo = -1, bestPay = -1;
     for (let i = 0; i < 12; i++) {
       const pay = mm[i].tips + mm[i].hours * WAGE;
       if (mm[i].shifts > 0 && pay > bestPay) { bestPay = pay; bestMo = i; }
     }
 
-    // Max total pay for mini bar scaling
     const maxPay = bestPay || 1;
-
-    const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
     let rows = '';
     for (let i = 0; i < 12; i++) {
@@ -900,23 +1159,23 @@
       const pay  = m.tips + wage;
       const tph  = m.hours > 0 ? m.tips / m.hours : 0;
       const isBest = i === bestMo;
-      const barW = m.shifts > 0 ? Math.round((pay / maxPay) * 80) : 0;
+      const barW = m.shifts > 0 ? Math.round((pay / maxPay) * 72) : 0;
 
       if (m.shifts === 0) {
         rows += `<tr>
-          <td class="td-date">${SHORT_MONTHS[i]}</td>
-          <td style="color:#bbb;">—</td>
-          <td style="color:#bbb;">—</td>
-          <td style="color:#bbb;">—</td>
-          <td style="color:#bbb; text-align:right;">—</td>
+          <td class="td-date" style="color:var(--text-muted)">${SHORT_MONTHS[i]}</td>
+          <td class="td-muted">—</td>
+          <td class="td-muted">—</td>
+          <td class="td-muted">—</td>
+          <td class="td-muted" style="text-align:right">—</td>
         </tr>`;
       } else {
         rows += `<tr class="${isBest ? 'best-month' : ''}">
           <td class="td-date">${SHORT_MONTHS[i]}${isBest ? ' ★' : ''}</td>
-          <td>${m.shifts}</td>
-          <td>${fmtH(m.hours)}</td>
-          <td>${fmt$(tph)}</td>
-          <td class="ann-total">
+          <td class="td-muted">${m.shifts}</td>
+          <td class="td-muted">${fmtH(m.hours)}</td>
+          <td class="td-muted">${fmt$(tph)}</td>
+          <td class="td-total ann-total">
             <div class="month-bar-wrap">
               <div class="month-bar" style="width:${barW}px"></div>
               ${fmt$(pay)}
@@ -926,19 +1185,17 @@
       }
     }
 
-    // Totals row
     const totWage = ytdHours * WAGE;
     rows += `<tr class="total-row">
       <td class="td-date">Total</td>
       <td>${yearShifts.length}</td>
       <td>${fmtH(ytdHours)}</td>
       <td>${fmt$(ytdTph)}</td>
-      <td class="td-gold" style="text-align:right;">${fmt$(ytdTips + totWage)}</td>
+      <td style="text-align:right; color:var(--accent)">${fmt$(ytdTips + totWage)}</td>
     </tr>`;
 
     tbody.innerHTML = rows;
   }
-
 
   function showToast(msg) {
     const t = document.getElementById('toast');
