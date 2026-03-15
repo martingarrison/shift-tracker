@@ -193,6 +193,8 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+    overflow: hidden;
+    min-width: 0;
   }
 
   .field { display: flex; flex-direction: column; gap: 5px; }
@@ -220,6 +222,13 @@
     outline: none;
     transition: border-color var(--dur-fast) ease, background var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  input[type="date"] {
+    font-size: 0.84rem; /* slightly smaller so mm/dd/yyyy fits comfortably */
+    padding-right: 8px;
   }
   .field input:focus {
     border-color: var(--accent);
