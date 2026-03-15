@@ -199,8 +199,8 @@
 
   .field { display: flex; flex-direction: column; gap: 5px; }
   .field.full { grid-column: 1 / -1; }
-  /* Date always spans full width; hours+tips sit side by side below */
-  #inp-date { grid-column: 1 / -1; }
+  /* Date field wrapper spans full width; hours+tips sit side by side below */
+  .field-date { grid-column: 1 / -1; }
 
   .field label {
     font-size: 0.68rem;
@@ -987,7 +987,7 @@
   </button>
   <div class="log-form-wrap" id="log-form-wrap">
     <div class="log-form">
-      <div class="field full">
+      <div class="field field-date">
         <label>Date</label>
         <input type="date" id="inp-date">
       </div>
