@@ -2,42 +2,43 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f7f3ee">
 <title>Shift Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:           #f7f3ee;
-    --surface:      #ffffff;
-    --surface-2:    #f0ece6;
-    --border:       rgba(60, 45, 25, 0.12);
-    --border-strong:rgba(60, 45, 25, 0.22);
-    --text:         #2a2018;
-    --text-muted:   #8a7d6a;
-    --text-subtle:  #b5a894;
-    --accent:       #3d8b74;
-    --accent-light: #eaf4f0;
-    --accent-hover: #306e5c;
-    --accent-rgb:   61, 139, 116;
-    --gold:         #c4841a;
-    --gold-light:   #fdf3e3;
-    --danger:       #c0442a;
-    --danger-light: #fdf0ed;
-    --success:      #3d8b74;
+    --bg:            #f7f3ee;
+    --surface:       #ffffff;
+    --surface-2:     #f0ece6;
+    --surface-3:     #e8e3dc;
+    --border:        rgba(60, 45, 25, 0.10);
+    --border-strong: rgba(60, 45, 25, 0.20);
+    --text:          #231c14;
+    --text-muted:    #8a7d6a;
+    --text-subtle:   #b8ad9e;
+    --accent:        #3d8b74;
+    --accent-light:  #e8f5f0;
+    --accent-hover:  #306e5c;
+    --accent-rgb:    61, 139, 116;
+    --gold:          #c4841a;
+    --gold-light:    #fef4e2;
+    --danger:        #c0442a;
+    --danger-light:  #fdf0ed;
 
-    --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
-    --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
-    --dur-fast:     120ms;
-    --dur-base:     220ms;
-    --dur-slow:     360ms;
+    --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --dur-fast:    110ms;
+    --dur-base:    200ms;
+    --dur-slow:    340ms;
 
-    --radius-sm:    8px;
-    --radius-md:    12px;
-    --radius-lg:    16px;
-    --radius-xl:    20px;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 16px;
+    --r-xl: 20px;
+    --r-2xl: 24px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -49,140 +50,169 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     touch-action: manipulation;
+    overscroll-behavior: none;
   }
 
-  /* ── Top chrome ─────────────────────────────────────────── */
+  /* ══════════════════════════════════════════
+     TOP CHROME
+  ══════════════════════════════════════════ */
   .top-chrome {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--bg);
+    background: rgba(247, 243, 238, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(247, 243, 238, 0.92);
   }
 
-  header {
+  .chrome-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .header-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px 24px 0;
-    max-width: 860px;
-    margin: 0 auto;
+    padding: 14px 0 0;
   }
 
-  .app-wordmark {
+  .wordmark {
     font-family: 'Instrument Serif', serif;
-    font-size: 1.45rem;
-    color: var(--text);
-    letter-spacing: -0.2px;
+    font-size: 1.35rem;
     line-height: 1;
+    letter-spacing: -0.2px;
   }
+  .wordmark em { font-style: italic; color: var(--accent); }
 
-  .app-wordmark em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .autosave-dot {
-    width: 7px; height: 7px;
+  .save-dot {
+    width: 6px; height: 6px;
     border-radius: 50%;
     background: var(--text-subtle);
-    transition: background var(--dur-base) ease;
-    flex-shrink: 0;
     margin-left: auto;
+    transition: background var(--dur-base) ease, transform var(--dur-base) var(--ease-spring);
   }
-  .autosave-dot.saved { background: var(--success); }
+  .save-dot.saved {
+    background: var(--accent);
+    transform: scale(1.3);
+  }
 
-  /* ── Tab bar ────────────────────────────────────────────── */
   .tab-bar {
     display: flex;
-    gap: 4px;
-    padding: 10px 24px;
-    max-width: 860px;
-    margin: 0 auto;
-    position: relative;
+    gap: 2px;
+    padding: 8px 0;
   }
 
   .tab-btn {
-    position: relative;
+    flex: 1;
     background: none;
     border: none;
-    padding: 7px 16px;
+    padding: 8px 0;
     font-family: 'Figtree', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-muted);
     cursor: pointer;
-    border-radius: var(--radius-sm);
+    border-radius: var(--r-sm);
     transition: color var(--dur-fast) ease, background var(--dur-fast) ease;
     letter-spacing: 0.01em;
-    white-space: nowrap;
   }
   .tab-btn:hover { color: var(--text); background: var(--surface-2); }
-  .tab-btn.active {
-    color: var(--accent);
-    background: var(--accent-light);
-    font-weight: 600;
-  }
+  .tab-btn.active { color: var(--accent); font-weight: 700; background: var(--accent-light); }
 
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
-  /* ── Layout ─────────────────────────────────────────────── */
-  .container {
-    max-width: 860px;
+  /* ══════════════════════════════════════════
+     LAYOUT
+  ══════════════════════════════════════════ */
+  .page {
+    max-width: 600px;
     margin: 0 auto;
-    padding: 28px 24px 80px;
+    padding: 20px 20px calc(40px + env(safe-area-inset-bottom));
   }
 
-  /* ── Log form card ───────────────────────────────────────── */
-  .log-card {
+  /* ══════════════════════════════════════════
+     LOG FORM  — collapsible pill
+  ══════════════════════════════════════════ */
+  .log-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-xl);
+    padding: 13px 20px;
+    width: 100%;
+    font-family: 'Figtree', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: background var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast) ease;
+    box-shadow: 0 2px 10px rgba(var(--accent-rgb), 0.3);
+    letter-spacing: 0.01em;
+  }
+  .log-toggle:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.38); }
+  .log-toggle:active { transform: scale(0.98); }
+
+  .log-toggle-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.22);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+    transition: transform var(--dur-base) var(--ease-spring);
+    flex-shrink: 0;
+  }
+  .log-toggle.open .log-toggle-icon { transform: rotate(45deg); }
+  .log-toggle-label { flex: 1; text-align: left; }
+  .log-toggle-hint {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+
+  .log-form-wrap {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height var(--dur-slow) var(--ease-out);
+  }
+  .log-form-wrap.open { max-height: 320px; }
+
+  .log-form {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    padding: 24px;
-    margin-bottom: 28px;
-    box-shadow: 0 2px 12px rgba(var(--accent-rgb), 0.06);
-  }
-
-  .log-card-title {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
-
-  .form-row {
+    border-top: none;
+    border-radius: 0 0 var(--r-xl) var(--r-xl);
+    padding: 20px 20px 20px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
-    align-items: flex-end;
   }
 
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.full { grid-column: 1 / -1; }
 
   .field label {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     color: var(--text-muted);
   }
 
   .field input {
     background: var(--surface-2);
     border: 1.5px solid transparent;
-    border-radius: var(--radius-sm);
-    padding: 11px 14px;
+    border-radius: var(--r-sm);
+    padding: 11px 13px;
     font-family: 'Figtree', sans-serif;
-    font-size: 0.92rem;
+    font-size: 0.94rem;
     font-weight: 500;
     color: var(--text);
     outline: none;
@@ -194,357 +224,583 @@
     background: var(--surface);
     box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
   }
-  .field input::placeholder { color: var(--text-subtle); }
+  .field input::placeholder { color: var(--text-subtle); font-weight: 400; }
 
-  .btn-add {
-    background: var(--accent);
-    color: #fff;
+  .btn-submit {
+    grid-column: 1 / -1;
+    background: var(--text);
+    color: #f7f3ee;
     border: none;
-    border-radius: var(--radius-sm);
-    padding: 12px 20px;
+    border-radius: var(--r-sm);
+    padding: 13px;
     font-family: 'Figtree', sans-serif;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast) ease;
-    width: 100%;
-    grid-column: 1 / -1;
-    box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.28);
+    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
     letter-spacing: 0.01em;
   }
-  .btn-add:hover {
-    background: var(--accent-hover);
-    box-shadow: 0 4px 14px rgba(var(--accent-rgb), 0.34);
-  }
-  .btn-add:active { transform: scale(0.98); }
+  .btn-submit:hover { opacity: 0.85; }
+  .btn-submit:active { transform: scale(0.98); }
 
-  /* ── Month nav ───────────────────────────────────────────── */
+  /* ══════════════════════════════════════════
+     MONTH NAV  — full-width, spacious
+  ══════════════════════════════════════════ */
   .month-nav {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
+    padding: 20px 0 14px;
+    gap: 0;
+    user-select: none;
   }
 
-  .month-label {
-    font-family: 'Instrument Serif', serif;
-    font-size: 1.55rem;
-    letter-spacing: -0.3px;
-    flex: 1;
-  }
-
-  .nav-btn {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    width: 34px; height: 34px;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    font-size: 1rem;
+  .month-nav-btn {
+    background: none;
+    border: none;
     color: var(--text-muted);
-    transition: background var(--dur-fast) ease, color var(--dur-fast) ease, border-color var(--dur-fast) ease;
-    flex-shrink: 0;
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: var(--r-sm);
+    transition: color var(--dur-fast) ease, background var(--dur-fast) ease;
+    min-width: 44px; min-height: 44px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .nav-btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--border-strong); }
+  .month-nav-btn:hover { color: var(--text); background: var(--surface-2); }
 
-  /* ── Summary cards ───────────────────────────────────────── */
-  .summary {
+  .month-title {
+    flex: 1;
+    text-align: center;
+  }
+  .month-name {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.6rem;
+    letter-spacing: -0.4px;
+    line-height: 1;
+    display: block;
+  }
+  .month-year {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+    display: block;
+  }
+
+  /* ══════════════════════════════════════════
+     SUMMARY — asymmetric hero + supporting
+  ══════════════════════════════════════════ */
+  .summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: 10px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 18px 20px;
+  .stat-hero {
+    grid-column: 1 / -1;
+    background: var(--accent);
+    border-radius: var(--r-xl);
+    padding: 22px 24px;
     position: relative;
     overflow: hidden;
-    transition: box-shadow var(--dur-base) ease;
   }
-  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-
-  .card-label {
+  .stat-hero::after {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .stat-hero-label {
     font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.07em;
+    font-weight: 700;
+    letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--text-subtle);
-    margin-bottom: 8px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 4px;
   }
-
-  .card-value {
+  .stat-hero-value {
     font-family: 'Instrument Serif', serif;
-    font-size: 1.65rem;
-    color: var(--text);
+    font-size: 2.8rem;
+    color: #fff;
     line-height: 1;
-    letter-spacing: -0.5px;
+    letter-spacing: -1px;
   }
-
-  .card-sub {
-    font-size: 0.68rem;
-    color: var(--text-subtle);
-    margin-top: 5px;
+  .stat-hero-sub {
+    font-size: 0.72rem;
     font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    margin-top: 5px;
   }
 
-  /* accent card variant */
-  .card.accent {
-    background: var(--accent);
-    border-color: var(--accent);
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px 18px;
   }
-  .card.accent .card-label { color: rgba(255,255,255,0.65); }
-  .card.accent .card-value { color: #fff; }
-  .card.accent .card-sub   { color: rgba(255,255,255,0.55); }
-
-  /* ── Section divider ─────────────────────────────────────── */
-  .section-label {
-    font-size: 0.7rem;
+  .stat-label {
+    font-size: 0.64rem;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 10px;
+    color: var(--text-subtle);
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.55rem;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.4px;
+  }
+  .stat-sub {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--text-subtle);
+    margin-top: 4px;
+  }
+
+  /* ══════════════════════════════════════════
+     SHIFT LIST  — card rows, no table
+  ══════════════════════════════════════════ */
+  .list-header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    margin-bottom: 8px;
   }
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
+  .list-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .list-count {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-subtle);
+    background: var(--surface-3);
+    padding: 2px 7px;
+    border-radius: 99px;
   }
 
-  /* ── Shifts table ────────────────────────────────────────── */
-  .table-scroll {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
+  .shift-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .shift-row {
     background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0 14px;
+    transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .shift-row::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity var(--dur-fast) ease;
+  }
+  .shift-row:hover {
+    background: var(--accent-light);
+    border-color: rgba(var(--accent-rgb), 0.2);
+  }
+  .shift-row:hover::before { opacity: 1; }
+
+  .shift-date-block { text-align: center; }
+  .shift-day {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .shift-mon {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 1px;
   }
 
-  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 480px; }
+  .shift-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .shift-hours {
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .shift-wage {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
 
-  thead th {
-    font-size: 0.67rem;
+  .shift-tips {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+    font-style: italic;
+    white-space: nowrap;
+  }
+  .shift-tips-label {
+    font-size: 0.6rem;
     font-weight: 600;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    text-align: left;
-    padding: 14px 16px 12px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface-2);
+    color: var(--text-subtle);
+    text-align: right;
+    margin-top: 1px;
   }
-  thead th:not(:first-child) { text-align: right; }
 
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background var(--dur-fast) ease;
-    position: relative;
+  .shift-total-block { text-align: right; }
+  .shift-total {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
   }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: var(--accent-light); }
-
-  tbody td {
-    padding: 13px 16px;
-    vertical-align: middle;
-    font-weight: 500;
-  }
-  tbody td:not(:first-child) { text-align: right; }
-
-  .td-date { font-weight: 600; color: var(--text); }
-  .td-tips { color: var(--accent); font-weight: 600; }
-  .td-total { color: var(--text); font-weight: 600; }
-  .td-muted { color: var(--text-muted); }
-
-  .btn-del {
+  .shift-del {
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
     background: none;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
+    border: none;
     color: var(--text-subtle);
-    font-size: 0.75rem;
-    padding: 4px 9px;
+    font-size: 0.8rem;
     cursor: pointer;
-    font-family: 'Figtree', sans-serif;
-    font-weight: 500;
-    transition: all var(--dur-fast) ease;
-    min-width: 44px;
-    min-height: 30px;
+    padding: 6px;
+    border-radius: var(--r-sm);
+    opacity: 0;
+    transition: opacity var(--dur-fast) ease, color var(--dur-fast) ease, background var(--dur-fast) ease;
+    line-height: 1;
   }
-  .btn-del:hover {
-    background: var(--danger-light);
-    border-color: rgba(192, 68, 42, 0.2);
-    color: var(--danger);
+  .shift-row:hover .shift-del { opacity: 1; }
+  .shift-del:hover { color: var(--danger); background: var(--danger-light); }
+
+  /* on touch devices always show delete */
+  @media (hover: none) {
+    .shift-del { opacity: 1; }
   }
 
-  .no-shifts {
+  .empty-state {
     text-align: center;
-    padding: 48px 24px;
+    padding: 48px 20px;
     color: var(--text-subtle);
-    font-size: 0.88rem;
-    font-weight: 500;
   }
-  .no-shifts-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
+  .empty-icon { font-size: 2.2rem; margin-bottom: 10px; opacity: 0.5; }
+  .empty-label { font-size: 0.88rem; font-weight: 500; }
+  .empty-hint  { font-size: 0.76rem; margin-top: 4px; color: var(--text-subtle); }
 
-  /* ── Annual view ─────────────────────────────────────────── */
+  /* ══════════════════════════════════════════
+     ANNUAL — bar chart + compact table
+  ══════════════════════════════════════════ */
   .annual-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    padding: 20px 0 16px;
+    gap: 0;
   }
-
   .annual-title {
     font-family: 'Instrument Serif', serif;
-    font-size: 1.55rem;
-    letter-spacing: -0.3px;
+    font-size: 1.6rem;
+    letter-spacing: -0.4px;
     flex: 1;
-  }
-
-  .year-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .year-display {
-    font-size: 0.9rem;
-    font-weight: 600;
-    min-width: 44px;
     text-align: center;
-    color: var(--text);
   }
 
-  .ytd-cards {
+  /* YTD stats — horizontal compact strip */
+  .ytd-strip {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 28px;
-  }
-
-  /* dark variant for annual cards */
-  .card.dark {
-    background: var(--text);
-    border-color: var(--text);
-  }
-  .card.dark .card-label { color: rgba(247,243,238,0.45); }
-  .card.dark .card-value { color: #f7f3ee; }
-  .card.dark .card-sub   { color: rgba(247,243,238,0.35); }
-
-  .ann-table tbody tr.best-month .td-total {
-    color: var(--gold);
-  }
-  .ann-table tbody tr.total-row {
-    background: var(--surface-2);
-    font-weight: 600;
-  }
-  .ann-table tbody tr.total-row:hover { background: var(--surface-2); }
-
-  .month-bar-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-  .month-bar {
-    height: 5px;
-    background: var(--accent);
-    border-radius: 3px;
-    min-width: 2px;
-    opacity: 0.6;
-    transition: width 0.4s var(--ease-out);
-  }
-  .best-month .month-bar { opacity: 1; background: var(--gold); }
-
-  .no-data-row {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--text-subtle);
-    font-size: 0.88rem;
-    font-weight: 500;
-  }
-
-  /* ── Data tab ────────────────────────────────────────────── */
-  .data-section {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius-xl);
-    padding: 24px;
-    margin-bottom: 12px;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    margin-bottom: 20px;
   }
+  .ytd-cell {
+    padding: 14px 12px;
+    border-right: 1px solid var(--border);
+    text-align: center;
+  }
+  .ytd-cell:last-child { border-right: none; }
+  .ytd-cell-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-subtle);
+    margin-bottom: 5px;
+  }
+  .ytd-cell-value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.2rem;
+    color: var(--text);
+    line-height: 1;
+    letter-spacing: -0.3px;
+  }
+  .ytd-cell.highlight .ytd-cell-value { color: var(--accent); }
 
-  .data-section-title {
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+  /* Bar chart */
+  .chart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 20px 16px 12px;
+    margin-bottom: 16px;
+  }
+  .chart-label {
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 80px;
     margin-bottom: 6px;
   }
-
-  .data-section-desc {
-    font-size: 0.84rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-    margin-bottom: 16px;
-    font-weight: 400;
-  }
-
-  .data-section.danger-zone {
-    border-color: rgba(192, 68, 42, 0.2);
-    background: var(--danger-light);
-  }
-  .data-section.danger-zone .data-section-title { color: var(--danger); }
-
-  .btn-secondary {
-    display: inline-flex;
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    background: var(--surface-2);
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    padding: 11px 18px;
-    font-family: 'Figtree', sans-serif;
-    font-size: 0.84rem;
+    gap: 0;
+    height: 100%;
+    justify-content: flex-end;
+    position: relative;
+  }
+  .bar-fill {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    background: var(--surface-3);
+    min-height: 3px;
+    transition: height 0.5s var(--ease-out), background var(--dur-base) ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill.has-data { background: rgba(var(--accent-rgb), 0.35); }
+  .bar-fill.best { background: var(--accent); }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 40%;
+    background: rgba(255,255,255,0.2);
+    border-radius: inherit;
+  }
+
+  .bar-tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: #f7f3ee;
+    font-size: 0.62rem;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 4px 7px;
+    border-radius: var(--r-sm);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-fast) ease;
+    z-index: 10;
+  }
+  .bar-col:hover .bar-tooltip { opacity: 1; }
+
+  .bar-months {
+    display: flex;
+    gap: 5px;
+  }
+  .bar-mon-label {
+    flex: 1;
+    text-align: center;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+  }
+  .bar-mon-label.best { color: var(--accent); font-weight: 700; }
+
+  /* Monthly breakdown — compact list, not table */
+  .month-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .month-row {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 12px 14px;
+    transition: background var(--dur-fast) ease;
+  }
+  .month-row:hover { background: var(--accent-light); }
+  .month-row.best { border-color: rgba(var(--accent-rgb), 0.25); }
+  .month-row.total { background: var(--surface-2); border-color: var(--border-strong); }
+  .month-row.total:hover { background: var(--surface-2); }
+  .month-row.empty { opacity: 0.45; }
+
+  .month-row-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .month-row.empty .month-row-name { font-weight: 500; color: var(--text-muted); }
+
+  .month-row-stats {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .month-stat {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .month-stat strong {
     font-weight: 600;
     color: var(--text);
-    cursor: pointer;
-    transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
-    letter-spacing: 0.01em;
   }
-  .btn-secondary:hover { background: var(--bg); border-color: var(--text-muted); }
-  .btn-secondary:active { transform: scale(0.98); }
 
-  .btn-danger {
-    display: inline-flex;
+  .month-row-pay {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.05rem;
+    letter-spacing: -0.2px;
+    color: var(--text);
+    white-space: nowrap;
+    text-align: right;
+  }
+  .month-row.best .month-row-pay { color: var(--accent); }
+  .month-row.total .month-row-pay { color: var(--accent); font-size: 1.1rem; }
+
+  /* ══════════════════════════════════════════
+     DATA TAB — settings-list style
+  ══════════════════════════════════════════ */
+  .settings-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .settings-group-label {
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 16px 18px 8px;
+  }
+
+  .settings-row {
+    display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--danger);
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 11px 18px;
-    font-family: 'Figtree', sans-serif;
-    font-size: 0.84rem;
-    font-weight: 600;
-    color: #fff;
+    gap: 14px;
+    padding: 14px 18px;
     cursor: pointer;
-    transition: opacity var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font-family: 'Figtree', sans-serif;
+    border-top: 1px solid var(--border);
+    transition: background var(--dur-fast) ease;
   }
-  .btn-danger:hover { opacity: 0.88; }
-  .btn-danger:active { transform: scale(0.98); }
+  .settings-group > .settings-row:first-of-type { border-top: none; }
+  .settings-row:hover { background: var(--surface-2); }
+  .settings-row:active { background: var(--surface-3); }
 
-  /* ── Modal ───────────────────────────────────────────────── */
+  .settings-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: background var(--dur-fast) ease;
+  }
+  .settings-row:hover .settings-icon { background: var(--surface-3); }
+
+  .settings-text { flex: 1; min-width: 0; }
+  .settings-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1px;
+  }
+  .settings-desc {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  .settings-chevron {
+    color: var(--text-subtle);
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .settings-group.danger .settings-row { }
+  .settings-group.danger .settings-icon { background: var(--danger-light); }
+  .settings-group.danger .settings-title { color: var(--danger); }
+  .settings-group.danger .settings-row:hover { background: var(--danger-light); }
+
+  .data-note {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 8px 0 0;
+    line-height: 1.5;
+  }
+
+  /* ══════════════════════════════════════════
+     MODAL — bottom sheet
+  ══════════════════════════════════════════ */
   .modal-bg {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(42, 32, 24, 0.5);
+    background: rgba(35, 28, 20, 0.45);
     z-index: 200;
     align-items: flex-end;
     justify-content: center;
@@ -553,73 +809,58 @@
   }
   .modal-bg.show { display: flex; }
 
-  @media (min-width: 500px) {
-    .modal-bg { align-items: center; }
-  }
+  @media (min-width: 520px) { .modal-bg { align-items: center; } }
 
   .modal {
     background: var(--surface);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    padding: 32px 28px 36px;
-    max-width: 440px;
+    border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+    padding: 0 24px calc(28px + env(safe-area-inset-bottom));
+    max-width: 480px;
     width: 100%;
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
-    animation: modal-up var(--dur-slow) var(--ease-out) both;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.15);
+    animation: sheet-up var(--dur-slow) var(--ease-out) both;
   }
-
-  @media (min-width: 500px) {
-    .modal {
-      border-radius: var(--radius-xl);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.18);
-    }
+  @media (min-width: 520px) {
+    .modal { border-radius: var(--r-2xl); padding: 28px 28px 28px; box-shadow: 0 24px 60px rgba(0,0,0,0.18); }
   }
-
-  @keyframes modal-up {
-    from { transform: translateY(24px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
+  @keyframes sheet-up {
+    from { transform: translateY(28px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
   }
 
   .modal-handle {
     width: 36px; height: 4px;
     background: var(--border-strong);
     border-radius: 2px;
-    margin: 0 auto 20px;
-    display: block;
+    margin: 12px auto 20px;
   }
-
-  @media (min-width: 500px) { .modal-handle { display: none; } }
+  @media (min-width: 520px) { .modal-handle { display: none; } }
 
   .modal h3 {
     font-family: 'Instrument Serif', serif;
     font-size: 1.25rem;
-    margin-bottom: 8px;
     letter-spacing: -0.2px;
+    margin-bottom: 8px;
   }
-
   .modal p {
     font-size: 0.84rem;
     color: var(--text-muted);
     line-height: 1.6;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
-
-  .modal-btns {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-  }
+  .modal-btns { display: flex; gap: 8px; flex-direction: column; }
 
   .btn-modal {
-    border: 1px solid var(--border-strong);
+    border: 1.5px solid var(--border-strong);
     background: none;
-    border-radius: var(--radius-sm);
-    padding: 10px 18px;
+    border-radius: var(--r-md);
+    padding: 13px 18px;
     font-family: 'Figtree', sans-serif;
-    font-size: 0.84rem;
+    font-size: 0.88rem;
     font-weight: 600;
     cursor: pointer;
     color: var(--text);
+    text-align: center;
     transition: background var(--dur-fast) ease;
   }
   .btn-modal:hover { background: var(--surface-2); }
@@ -627,252 +868,242 @@
   .btn-modal.danger:hover { background: var(--danger-light); }
   .btn-modal.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn-modal.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  .btn-modal.ghost { border-color: transparent; color: var(--text-muted); }
+  .btn-modal.ghost:hover { background: var(--surface-2); color: var(--text); }
 
-  /* ── Toast ───────────────────────────────────────────────── */
+  /* ══════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════ */
   .toast {
     position: fixed;
-    bottom: 28px;
+    bottom: calc(24px + env(safe-area-inset-bottom));
     left: 50%;
-    transform: translateX(-50%) translateY(12px);
+    transform: translateX(-50%) translateY(14px);
     background: var(--text);
     color: #f7f3ee;
-    padding: 12px 20px;
-    border-radius: var(--radius-lg);
-    font-size: 0.84rem;
-    font-weight: 500;
+    padding: 11px 18px;
+    border-radius: 99px;
+    font-size: 0.82rem;
+    font-weight: 600;
     opacity: 0;
     transition: opacity var(--dur-base) ease, transform var(--dur-base) var(--ease-spring);
     pointer-events: none;
     z-index: 999;
     white-space: nowrap;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+    letter-spacing: 0.01em;
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* ── Animations ──────────────────────────────────────────── */
+  /* ══════════════════════════════════════════
+     ANIMATIONS
+  ══════════════════════════════════════════ */
   @media (prefers-reduced-motion: no-preference) {
-    .card {
-      animation: fade-up 0.4s var(--ease-out) both;
+    .shift-row {
+      animation: row-in 0.3s var(--ease-out) both;
     }
-    .card:nth-child(1) { animation-delay: 0ms; }
-    .card:nth-child(2) { animation-delay: 40ms; }
-    .card:nth-child(3) { animation-delay: 80ms; }
-    .card:nth-child(4) { animation-delay: 120ms; }
-
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes row-in {
+      from { opacity: 0; transform: translateY(8px); }
       to   { opacity: 1; transform: translateY(0); }
     }
   }
 
-  /* ── Responsive ──────────────────────────────────────────── */
-  @media (max-width: 640px) {
-    .summary, .ytd-cards { grid-template-columns: repeat(2, 1fr); }
-    .form-row { grid-template-columns: 1fr; }
-    header { padding: 12px 16px 0; }
-    .tab-bar { padding: 8px 12px; gap: 2px; }
-    .tab-btn { padding: 7px 11px; font-size: 0.78rem; }
-    .container { padding: 20px 16px 80px; }
-    .log-card { padding: 20px 16px; }
-    .data-section { padding: 20px 16px; }
-    .modal { padding: 28px 20px 32px; }
-    .modal-btns { flex-direction: column; }
-    .modal-btns .btn-modal { width: 100%; text-align: center; }
-    .field input[type="date"] { font-size: 0.85rem; }
+  /* ══════════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════════ */
+  @media (max-width: 400px) {
+    .ytd-strip { grid-template-columns: repeat(2, 1fr); }
+    .ytd-cell:nth-child(2) { border-right: none; }
+    .ytd-cell:nth-child(3) { border-top: 1px solid var(--border); }
+    .ytd-cell:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
+    .stat-hero-value { font-size: 2.2rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- Top chrome -->
+<!-- TOP CHROME -->
 <div class="top-chrome">
-  <header>
-    <div class="app-wordmark">Shift <em>Tracker</em></div>
-    <div class="autosave-dot" id="autosave-dot" title="Autosaved"></div>
-  </header>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('shifts', this)">Monthly</button>
-    <button class="tab-btn" onclick="switchTab('annual', this)">Annual</button>
-    <button class="tab-btn" onclick="switchTab('data', this)">Data</button>
-  </div>
-</div>
-
-<!-- Import modal -->
-<div class="modal-bg" id="import-modal">
-  <div class="modal">
-    <span class="modal-handle"></span>
-    <h3>Import CSV</h3>
-    <p id="import-modal-msg"></p>
-    <div class="modal-btns">
-      <button class="btn-modal" onclick="closeModal()">Cancel</button>
-      <button class="btn-modal danger" onclick="confirmImport()">Replace all</button>
-      <button class="btn-modal primary" onclick="mergeImport()">Merge</button>
+  <div class="chrome-inner">
+    <div class="header-row">
+      <div class="wordmark">Shift <em>Tracker</em></div>
+      <div class="save-dot" id="save-dot"></div>
+    </div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('shifts',this)">Monthly</button>
+      <button class="tab-btn" onclick="switchTab('annual',this)">Annual</button>
+      <button class="tab-btn" onclick="switchTab('data',this)">Data</button>
     </div>
   </div>
 </div>
 
-<!-- ── Monthly shifts tab ── -->
-<div id="tab-shifts" class="tab-panel active">
-<div class="container">
+<!-- IMPORT MODAL -->
+<div class="modal-bg" id="import-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Import CSV</h3>
+    <p id="import-modal-msg"></p>
+    <div class="modal-btns">
+      <button class="btn-modal primary" onclick="mergeImport()">Merge with existing shifts</button>
+      <button class="btn-modal danger"  onclick="confirmImport()">Replace all shifts</button>
+      <button class="btn-modal ghost"   onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
-  <div class="log-card">
-    <div class="log-card-title">Log a shift</div>
-    <div class="form-row">
+<!-- ══ MONTHLY TAB ══ -->
+<div id="tab-shifts" class="tab-panel active">
+<div class="page">
+
+  <!-- Log toggle + collapsible form -->
+  <button class="log-toggle" id="log-toggle" onclick="toggleLogForm()">
+    <span class="log-toggle-icon">+</span>
+    <span class="log-toggle-label">Log a shift</span>
+    <span class="log-toggle-hint" id="log-hint">tap to add</span>
+  </button>
+  <div class="log-form-wrap" id="log-form-wrap">
+    <div class="log-form">
       <div class="field">
         <label>Date</label>
         <input type="date" id="inp-date">
       </div>
       <div class="field">
         <label>Hours Worked</label>
-        <input type="number" id="inp-hours" min="0" max="24" step="0.25" placeholder="e.g. 6.5">
+        <input type="number" id="inp-hours" min="0" max="24" step="0.25" placeholder="6.5">
       </div>
       <div class="field">
         <label>Tips Earned ($)</label>
-        <input type="number" id="inp-tips" min="0" step="0.01" placeholder="e.g. 87.50">
+        <input type="number" id="inp-tips" min="0" step="0.01" placeholder="87.50">
       </div>
-      <button class="btn-add" onclick="addShift()">+ Add Shift</button>
+      <button class="btn-submit full" onclick="addShift()">Save Shift</button>
     </div>
   </div>
 
+  <!-- Month navigation -->
   <div class="month-nav">
-    <button class="nav-btn" onclick="prevMonth()">&#8592;</button>
-    <div class="month-label" id="month-label"></div>
-    <button class="nav-btn" onclick="nextMonth()">&#8594;</button>
+    <button class="month-nav-btn" onclick="prevMonth()">&#8592;</button>
+    <div class="month-title">
+      <span class="month-name" id="month-name"></span>
+      <span class="month-year" id="month-year"></span>
+    </div>
+    <button class="month-nav-btn" onclick="nextMonth()">&#8594;</button>
   </div>
 
-  <div class="summary">
-    <div class="card">
-      <div class="card-label">Shifts</div>
-      <div class="card-value" id="s-shifts">0</div>
-      <div class="card-sub">this month</div>
+  <!-- Summary — hero + supporting -->
+  <div class="summary-grid">
+    <div class="stat-hero">
+      <div class="stat-hero-label">Total Pay</div>
+      <div class="stat-hero-value" id="s-total">$0</div>
+      <div class="stat-hero-sub">tips + $2.15/hr wage</div>
     </div>
-    <div class="card">
-      <div class="card-label">Hours</div>
-      <div class="card-value" id="s-hours">0</div>
-      <div class="card-sub">this month</div>
+    <div class="stat-card">
+      <div class="stat-label">Shifts</div>
+      <div class="stat-value" id="s-shifts">0</div>
+      <div class="stat-sub">this month</div>
     </div>
-    <div class="card">
-      <div class="card-label">Avg Tips/Hr</div>
-      <div class="card-value" id="s-tph">$0</div>
-      <div class="card-sub">tip income only</div>
+    <div class="stat-card">
+      <div class="stat-label">Hours</div>
+      <div class="stat-value" id="s-hours">0</div>
+      <div class="stat-sub">worked</div>
     </div>
-    <div class="card accent">
-      <div class="card-label">Total Pay</div>
-      <div class="card-value" id="s-total">$0</div>
-      <div class="card-sub">tips + $2.15/hr</div>
+    <div class="stat-card" style="grid-column: 1 / -1;">
+      <div class="stat-label">Avg Tips / Hr</div>
+      <div class="stat-value" id="s-tph">$0</div>
+      <div class="stat-sub">tip income only</div>
     </div>
   </div>
 
-  <div class="section-label">Shifts this month</div>
-  <div class="table-scroll">
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Hours</th>
-          <th>Tips</th>
-          <th>Tips/Hr</th>
-          <th>Wage</th>
-          <th>Total</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="shift-body"></tbody>
-    </table>
+  <!-- Shift list -->
+  <div class="list-header">
+    <div class="list-title">Shifts</div>
+    <div class="list-count" id="shift-count">0</div>
   </div>
+  <div class="shift-list" id="shift-list"></div>
 
 </div>
 </div>
 
-<!-- ── Annual summary tab ── -->
+<!-- ══ ANNUAL TAB ══ -->
 <div id="tab-annual" class="tab-panel">
-<div class="container">
+<div class="page">
 
   <div class="annual-header">
-    <div class="annual-title" id="annual-title">2026 Summary</div>
-    <div class="year-nav">
-      <button class="nav-btn" onclick="prevYear()">&#8592;</button>
-      <div class="year-display" id="year-display">2026</div>
-      <button class="nav-btn" onclick="nextYear()">&#8594;</button>
+    <button class="month-nav-btn" onclick="prevYear()">&#8592;</button>
+    <div class="annual-title" id="annual-title">2026</div>
+    <button class="month-nav-btn" onclick="nextYear()">&#8594;</button>
+  </div>
+
+  <!-- YTD strip -->
+  <div class="ytd-strip">
+    <div class="ytd-cell">
+      <div class="ytd-cell-label">Shifts</div>
+      <div class="ytd-cell-value" id="ytd-shifts">0</div>
+    </div>
+    <div class="ytd-cell">
+      <div class="ytd-cell-label">Hours</div>
+      <div class="ytd-cell-value" id="ytd-hours">0</div>
+    </div>
+    <div class="ytd-cell">
+      <div class="ytd-cell-label">Tips/Hr</div>
+      <div class="ytd-cell-value" id="ytd-tph">$0</div>
+    </div>
+    <div class="ytd-cell highlight">
+      <div class="ytd-cell-label">Total Pay</div>
+      <div class="ytd-cell-value" id="ytd-total">$0</div>
     </div>
   </div>
 
-  <div class="section-label">Year to date</div>
-  <div class="ytd-cards">
-    <div class="card dark">
-      <div class="card-label">Total Shifts</div>
-      <div class="card-value" id="ytd-shifts">0</div>
-      <div class="card-sub">all year</div>
-    </div>
-    <div class="card dark">
-      <div class="card-label">Total Hours</div>
-      <div class="card-value" id="ytd-hours">0</div>
-      <div class="card-sub">all year</div>
-    </div>
-    <div class="card dark">
-      <div class="card-label">Avg Tips/Hr</div>
-      <div class="card-value" id="ytd-tph">$0</div>
-      <div class="card-sub">tip income only</div>
-    </div>
-    <div class="card dark">
-      <div class="card-label">Total Pay</div>
-      <div class="card-value" id="ytd-total">$0</div>
-      <div class="card-sub">tips + $2.15/hr</div>
-    </div>
+  <!-- Bar chart -->
+  <div class="chart-wrap">
+    <div class="chart-label">Monthly earnings</div>
+    <div class="bar-chart" id="bar-chart"></div>
+    <div class="bar-months" id="bar-months"></div>
   </div>
 
-  <div class="section-label">Month by month</div>
-  <div class="table-scroll">
-    <table class="ann-table">
-      <thead>
-        <tr>
-          <th>Month</th>
-          <th>Shifts</th>
-          <th>Hours</th>
-          <th>Avg Tips/Hr</th>
-          <th>Total Pay</th>
-        </tr>
-      </thead>
-      <tbody id="annual-body"></tbody>
-    </table>
-  </div>
+  <!-- Month list -->
+  <div class="month-list" id="month-list"></div>
 
 </div>
 </div>
 
-<!-- ── Data tab ── -->
+<!-- ══ DATA TAB ══ -->
 <div id="tab-data" class="tab-panel">
-<div class="container">
+<div class="page">
 
-  <div class="section-label">Import &amp; Export</div>
-
-  <div class="data-section">
-    <div class="data-section-title">Export your data</div>
-    <p class="data-section-desc">Download all your shifts as a CSV file — use it in Excel, Google Sheets, or to back up and move your data.</p>
-    <button class="btn-secondary" onclick="exportCSV()">
-      <span>↓</span> Download CSV
+  <div class="settings-group">
+    <div class="settings-group-label">Your data</div>
+    <button class="settings-row" onclick="exportCSV()">
+      <div class="settings-icon">↓</div>
+      <div class="settings-text">
+        <div class="settings-title">Export to CSV</div>
+        <div class="settings-desc">Download all shifts — open in Excel, Sheets, or use as a backup</div>
+      </div>
+      <div class="settings-chevron">›</div>
     </button>
-  </div>
-
-  <div class="data-section">
-    <div class="data-section-title">Import from CSV</div>
-    <p class="data-section-desc">Load shifts from a previously exported CSV. You can replace all existing data or merge it in — duplicates are skipped automatically.</p>
-    <button class="btn-secondary" onclick="triggerImport()">
-      <span>↑</span> Choose CSV File
+    <button class="settings-row" onclick="triggerImport()">
+      <div class="settings-icon">↑</div>
+      <div class="settings-text">
+        <div class="settings-title">Import from CSV</div>
+        <div class="settings-desc">Load a previously exported file — merge or replace existing data</div>
+      </div>
+      <div class="settings-chevron">›</div>
     </button>
     <input type="file" id="csv-file-input" accept=".csv" onchange="handleFileImport(event)" style="display:none;">
   </div>
 
-  <div class="data-section danger-zone" style="margin-top: 28px;">
-    <div class="data-section-title">Clear all data</div>
-    <p class="data-section-desc">Permanently delete all shifts from this browser. Export a backup first if you need to keep your records.</p>
-    <button class="btn-danger" onclick="clearAllData()">
-      <span>✕</span> Clear All Shifts
+  <div class="settings-group danger">
+    <div class="settings-group-label">Danger zone</div>
+    <button class="settings-row" onclick="clearAllData()">
+      <div class="settings-icon">✕</div>
+      <div class="settings-text">
+        <div class="settings-title">Clear all shifts</div>
+        <div class="settings-desc">Permanently delete everything from this browser</div>
+      </div>
+      <div class="settings-chevron">›</div>
     </button>
   </div>
+
+  <p class="data-note">Data is stored locally in your browser.<br>Export regularly to keep a backup.</p>
 
 </div>
 </div>
@@ -881,26 +1112,41 @@
 
 <script>
   const WAGE = 2.15;
+  const MONTHS_LONG  = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fmt$  = n => '$' + n.toFixed(2);
+  const fmtH  = n => n % 1 === 0 ? n + 'h' : n.toFixed(2) + 'h';
+  const fmtH2 = n => n % 1 === 0 ? n.toString() : n.toFixed(2);
+
   let shifts = JSON.parse(localStorage.getItem('shifts') || '[]');
-  let viewYear, viewMonth;
+  let viewYear, viewMonth, annualYear;
   let pendingImportData = null;
+  let logOpen = false;
 
   const now = new Date();
-  viewYear  = now.getFullYear();
+  viewYear = annualYear = now.getFullYear();
   viewMonth = now.getMonth();
   document.getElementById('inp-date').value = now.toISOString().slice(0, 10);
 
   // ── Persist ───────────────────────────────────────────────
   function persist() {
     localStorage.setItem('shifts', JSON.stringify(shifts));
-    flashSaved();
-  }
-
-  function flashSaved() {
-    const dot = document.getElementById('autosave-dot');
+    const dot = document.getElementById('save-dot');
     dot.classList.add('saved');
     clearTimeout(dot._t);
     dot._t = setTimeout(() => dot.classList.remove('saved'), 1800);
+  }
+
+  // ── Log form toggle ───────────────────────────────────────
+  function toggleLogForm() {
+    logOpen = !logOpen;
+    const btn  = document.getElementById('log-toggle');
+    const wrap = document.getElementById('log-form-wrap');
+    const hint = document.getElementById('log-hint');
+    btn.classList.toggle('open', logOpen);
+    wrap.classList.toggle('open', logOpen);
+    hint.textContent = logOpen ? 'tap to close' : 'tap to add';
+    if (logOpen) setTimeout(() => document.getElementById('inp-hours').focus(), 360);
   }
 
   // ── Add / Delete ──────────────────────────────────────────
@@ -910,29 +1156,30 @@
     const tips  = parseFloat(document.getElementById('inp-tips').value);
 
     if (!date)                      return showToast('Please enter a date.');
-    if (isNaN(hours) || hours <= 0) return showToast('Please enter valid hours.');
-    if (isNaN(tips)  || tips  < 0)  return showToast('Please enter valid tips (0 or more).');
+    if (isNaN(hours) || hours <= 0) return showToast('Enter valid hours.');
+    if (isNaN(tips)  || tips  < 0)  return showToast('Enter valid tips (0 or more).');
 
     shifts.push({ id: Date.now(), date, hours, tips });
     shifts.sort((a, b) => a.date.localeCompare(b.date));
 
-    const d   = new Date(date + 'T00:00:00');
+    const d = new Date(date + 'T00:00:00');
     viewYear  = d.getFullYear();
     viewMonth = d.getMonth();
 
     document.getElementById('inp-hours').value = '';
     document.getElementById('inp-tips').value  = '';
 
-    persist();
-    render();
+    // Close form after save
+    logOpen = true; toggleLogForm();
+
+    persist(); render();
     showToast('Shift saved ✓');
   }
 
   function deleteShift(id) {
     shifts = shifts.filter(s => s.id !== id);
-    persist();
-    render();
-    showToast('Shift removed.');
+    persist(); render();
+    showToast('Removed.');
   }
 
   // ── Month nav ─────────────────────────────────────────────
@@ -946,15 +1193,10 @@
     });
   }
 
-  // ── Render ────────────────────────────────────────────────
-  const MONTHS = ['January','February','March','April','May','June',
-                  'July','August','September','October','November','December'];
-  const SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const fmt$  = n => '$' + n.toFixed(2);
-  const fmtH  = n => n % 1 === 0 ? n.toString() : n.toFixed(2);
-
+  // ── Render monthly ────────────────────────────────────────
   function render() {
-    document.getElementById('month-label').textContent = MONTHS[viewMonth] + ' ' + viewYear;
+    document.getElementById('month-name').textContent = MONTHS_LONG[viewMonth];
+    document.getElementById('month-year').textContent = viewYear;
 
     const ms         = monthShifts();
     const totalHours = ms.reduce((a, s) => a + s.hours, 0);
@@ -962,35 +1204,142 @@
     const wagePay    = totalHours * WAGE;
     const tph        = totalHours > 0 ? totalTips / totalHours : 0;
 
-    document.getElementById('s-shifts').textContent = ms.length;
-    document.getElementById('s-hours').textContent  = fmtH(totalHours);
-    document.getElementById('s-tph').textContent    = fmt$(tph);
     document.getElementById('s-total').textContent  = fmt$(totalTips + wagePay);
+    document.getElementById('s-shifts').textContent = ms.length;
+    document.getElementById('s-hours').textContent  = fmtH2(totalHours);
+    document.getElementById('s-tph').textContent    = fmt$(tph);
+    document.getElementById('shift-count').textContent = ms.length;
 
-    const tbody = document.getElementById('shift-body');
+    const list = document.getElementById('shift-list');
     if (ms.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="no-shifts">
-        <div class="no-shifts-icon">📋</div>
-        No shifts logged for this month.
-      </td></tr>`;
+      list.innerHTML = `<div class="empty-state">
+        <div class="empty-icon">☕</div>
+        <div class="empty-label">No shifts this month</div>
+        <div class="empty-hint">Tap "Log a shift" to add one</div>
+      </div>`;
       return;
     }
 
-    tbody.innerHTML = [...ms].reverse().map(s => {
-      const dateStr = new Date(s.date + 'T00:00:00')
-        .toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const wage  = s.hours * WAGE;
-      const tphS  = s.hours > 0 ? s.tips / s.hours : 0;
-      return `<tr>
-        <td class="td-date">${dateStr}</td>
-        <td class="td-muted">${fmtH(s.hours)}</td>
-        <td class="td-tips">${fmt$(s.tips)}</td>
-        <td class="td-muted">${fmt$(tphS)}</td>
-        <td class="td-muted">${fmt$(wage)}</td>
-        <td class="td-total">${fmt$(s.tips + wage)}</td>
-        <td><button class="btn-del" onclick="deleteShift(${s.id})">✕</button></td>
-      </tr>`;
+    list.innerHTML = [...ms].reverse().map((s, i) => {
+      const d       = new Date(s.date + 'T00:00:00');
+      const day     = d.getDate();
+      const mon     = MONTHS_SHORT[d.getMonth()];
+      const wage    = s.hours * WAGE;
+      const tphS    = s.hours > 0 ? s.tips / s.hours : 0;
+      const total   = s.tips + wage;
+      return `<div class="shift-row" style="animation-delay:${i * 35}ms">
+        <div class="shift-date-block">
+          <div class="shift-day">${day}</div>
+          <div class="shift-mon">${mon}</div>
+        </div>
+        <div class="shift-meta">
+          <div class="shift-hours">${fmtH(s.hours)} &middot; ${fmt$(tphS)}/hr</div>
+          <div class="shift-wage">Wage ${fmt$(wage)}</div>
+        </div>
+        <div>
+          <div class="shift-tips">${fmt$(s.tips)}</div>
+          <div class="shift-tips-label">Tips</div>
+        </div>
+        <div class="shift-total-block">
+          <div class="shift-total">${fmt$(total)}</div>
+        </div>
+        <button class="shift-del" onclick="deleteShift(${s.id})" title="Remove">✕</button>
+      </div>`;
     }).join('');
+  }
+
+  // ── Render annual ─────────────────────────────────────────
+  function prevYear() { annualYear--; renderAnnual(); }
+  function nextYear() { annualYear++; renderAnnual(); }
+
+  function renderAnnual() {
+    document.getElementById('annual-title').textContent = annualYear;
+
+    const yearShifts = shifts.filter(s => s.date.startsWith(annualYear + ''));
+    const ytdHours   = yearShifts.reduce((a, s) => a + s.hours, 0);
+    const ytdTips    = yearShifts.reduce((a, s) => a + s.tips,  0);
+    const ytdWage    = ytdHours * WAGE;
+    const ytdTph     = ytdHours > 0 ? ytdTips / ytdHours : 0;
+
+    document.getElementById('ytd-shifts').textContent = yearShifts.length;
+    document.getElementById('ytd-hours').textContent  = fmtH2(ytdHours);
+    document.getElementById('ytd-tph').textContent    = fmt$(ytdTph);
+    document.getElementById('ytd-total').textContent  = fmt$(ytdTips + ytdWage);
+
+    // Build per-month data
+    const mm = [];
+    for (let i = 0; i < 12; i++) mm.push({ shifts: 0, hours: 0, tips: 0 });
+    yearShifts.forEach(s => {
+      const mo = parseInt(s.date.slice(5,7)) - 1;
+      mm[mo].shifts++;
+      mm[mo].hours += s.hours;
+      mm[mo].tips  += s.tips;
+    });
+
+    // Best month
+    let bestMo = -1, bestPay = -1;
+    mm.forEach((m, i) => {
+      const pay = m.tips + m.hours * WAGE;
+      if (m.shifts > 0 && pay > bestPay) { bestPay = pay; bestMo = i; }
+    });
+    const maxPay = bestPay > 0 ? bestPay : 1;
+
+    // ── Bar chart ──
+    const barChart  = document.getElementById('bar-chart');
+    const barMonths = document.getElementById('bar-months');
+
+    barChart.innerHTML = mm.map((m, i) => {
+      const pay  = m.tips + m.hours * WAGE;
+      const pct  = m.shifts > 0 ? (pay / maxPay) * 100 : 0;
+      const cls  = m.shifts === 0 ? '' : (i === bestMo ? 'has-data best' : 'has-data');
+      const tip  = m.shifts > 0 ? fmt$(pay) : '—';
+      return `<div class="bar-col">
+        <div class="bar-tooltip">${MONTHS_SHORT[i]}: ${tip}</div>
+        <div class="bar-fill ${cls}" style="height:${Math.max(pct, m.shifts > 0 ? 4 : 2)}%"></div>
+      </div>`;
+    }).join('');
+
+    barMonths.innerHTML = mm.map((m, i) =>
+      `<div class="bar-mon-label ${i === bestMo ? 'best' : ''}">${MONTHS_SHORT[i][0]}</div>`
+    ).join('');
+
+    // ── Month list ──
+    const monthList = document.getElementById('month-list');
+    let rows = mm.map((m, i) => {
+      const wage = m.hours * WAGE;
+      const pay  = m.tips + wage;
+      const tph  = m.hours > 0 ? m.tips / m.hours : 0;
+      const isBest = i === bestMo;
+
+      if (m.shifts === 0) {
+        return `<div class="month-row empty">
+          <div class="month-row-name">${MONTHS_SHORT[i]}</div>
+          <div class="month-row-stats"><span class="month-stat">No shifts</span></div>
+          <div class="month-row-pay">—</div>
+        </div>`;
+      }
+      return `<div class="month-row ${isBest ? 'best' : ''}">
+        <div class="month-row-name">${MONTHS_SHORT[i]}${isBest ? ' ★' : ''}</div>
+        <div class="month-row-stats">
+          <span class="month-stat"><strong>${m.shifts}</strong> shifts</span>
+          <span class="month-stat"><strong>${fmtH2(m.hours)}</strong>h</span>
+          <span class="month-stat">${fmt$(tph)}/hr</span>
+        </div>
+        <div class="month-row-pay">${fmt$(pay)}</div>
+      </div>`;
+    }).join('');
+
+    // Totals row
+    rows += `<div class="month-row total">
+      <div class="month-row-name">Total</div>
+      <div class="month-row-stats">
+        <span class="month-stat"><strong>${yearShifts.length}</strong> shifts</span>
+        <span class="month-stat"><strong>${fmtH2(ytdHours)}</strong>h</span>
+      </div>
+      <div class="month-row-pay">${fmt$(ytdTips + ytdWage)}</div>
+    </div>`;
+
+    monthList.innerHTML = rows;
   }
 
   // ── CSV export ────────────────────────────────────────────
@@ -1001,18 +1350,15 @@
               (s.hours > 0 ? s.tips / s.hours : 0).toFixed(2),
               wage, (s.tips + parseFloat(wage)).toFixed(2)];
     });
-
     const mm = {};
     data.forEach(s => {
-      const k = s.date.slice(0, 7);
-      if (!mm[k]) mm[k] = { shifts: 0, hours: 0, tips: 0 };
+      const k = s.date.slice(0,7);
+      if (!mm[k]) mm[k] = { shifts:0, hours:0, tips:0 };
       mm[k].shifts++; mm[k].hours += s.hours; mm[k].tips += s.tips;
     });
-
     return [
       ['Date','Hours Worked','Tips','Tips Per Hour','Wage Pay (@ $2.15/hr)','Total Pay'],
-      ...rows,
-      [],
+      ...rows, [],
       ['--- MONTHLY SUMMARY ---'],
       ['Month','Shifts','Hours','Total Tips','Avg Tips/Hr','Wage Pay','Total Pay'],
       ...Object.keys(mm).sort().map(k => {
@@ -1025,13 +1371,12 @@
   }
 
   function exportCSV() {
-    if (shifts.length === 0) return showToast('No shifts to export.');
-    const a = Object.assign(document.createElement('a'), {
+    if (!shifts.length) return showToast('No shifts to export.');
+    Object.assign(document.createElement('a'), {
       href: URL.createObjectURL(new Blob([buildCSV(shifts)], { type: 'text/csv' })),
       download: 'shifts.csv'
-    });
-    a.click();
-    showToast('CSV exported.');
+    }).click();
+    showToast('CSV downloaded.');
   }
 
   // ── CSV import ────────────────────────────────────────────
@@ -1046,19 +1391,18 @@
     const reader = new FileReader();
     reader.onload = ev => {
       const parsed = parseCSV(ev.target.result);
-      if (!parsed.length) return showToast('No valid shifts found in that file.');
+      if (!parsed.length) return showToast('No valid shifts found.');
       pendingImportData = parsed;
       document.getElementById('import-modal-msg').textContent = shifts.length > 0
-        ? `Found ${parsed.length} shift(s) in the file. Replace your ${shifts.length} existing shift(s), or merge them together (duplicates will be skipped)?`
-        : `Found ${parsed.length} shift(s). Ready to import.`;
+        ? `Found ${parsed.length} shift(s). Merge with your ${shifts.length} existing shift(s), or replace everything?`
+        : `Found ${parsed.length} shift(s) ready to import.`;
       document.getElementById('import-modal').classList.add('show');
     };
     reader.readAsText(file);
   }
 
   function parseCSV(text) {
-    return text.split('\n')
-      .map(l => l.trim())
+    return text.split('\n').map(l => l.trim())
       .filter(l => l && !l.startsWith('Date') && !l.startsWith('---') && !l.startsWith('Month'))
       .reduce((acc, line) => {
         const c = line.split(',');
@@ -1074,17 +1418,8 @@
     pendingImportData = null;
   }
 
-  function clearAllData() {
-    if (!confirm('Delete all shifts permanently? Make sure you have exported a backup.')) return;
-    shifts = [];
-    persist();
-    render();
-    showToast('All shifts cleared.');
-  }
-
   function confirmImport() {
-    shifts = pendingImportData;
-    shifts.sort((a, b) => a.date.localeCompare(b.date));
+    shifts = pendingImportData.sort((a,b) => a.date.localeCompare(b.date));
     persist(); render(); closeModal();
     showToast(`Imported ${shifts.length} shift(s).`);
   }
@@ -1092,9 +1427,15 @@
   function mergeImport() {
     const existing = new Set(shifts.map(s => `${s.date}|${s.hours}|${s.tips}`));
     const added = pendingImportData.filter(s => !existing.has(`${s.date}|${s.hours}|${s.tips}`));
-    shifts = [...shifts, ...added].sort((a, b) => a.date.localeCompare(b.date));
+    shifts = [...shifts, ...added].sort((a,b) => a.date.localeCompare(b.date));
     persist(); render(); closeModal();
-    showToast(`Merged — ${added.length} new shift(s) added.`);
+    showToast(`Merged — ${added.length} new shift(s).`);
+  }
+
+  function clearAllData() {
+    if (!confirm('Delete all shifts permanently? Export a backup first.')) return;
+    shifts = []; persist(); render();
+    showToast('All shifts cleared.');
   }
 
   // ── Tab switching ─────────────────────────────────────────
@@ -1106,103 +1447,13 @@
     if (name === 'annual') renderAnnual();
   }
 
-  // ── Annual summary ────────────────────────────────────────
-  let annualYear = now.getFullYear();
-
-  function prevYear() { annualYear--; renderAnnual(); }
-  function nextYear() { annualYear++; renderAnnual(); }
-
-  function renderAnnual() {
-    document.getElementById('year-display').textContent = annualYear;
-    document.getElementById('annual-title').textContent = annualYear + ' Summary';
-
-    const yearShifts = shifts.filter(s => s.date.startsWith(annualYear + ''));
-
-    const ytdHours = yearShifts.reduce((a, s) => a + s.hours, 0);
-    const ytdTips  = yearShifts.reduce((a, s) => a + s.tips,  0);
-    const ytdWage  = ytdHours * WAGE;
-    const ytdTph   = ytdHours > 0 ? ytdTips / ytdHours : 0;
-
-    document.getElementById('ytd-shifts').textContent = yearShifts.length;
-    document.getElementById('ytd-hours').textContent  = fmtH(ytdHours);
-    document.getElementById('ytd-tph').textContent    = fmt$(ytdTph);
-    document.getElementById('ytd-total').textContent  = fmt$(ytdTips + ytdWage);
-
-    const tbody = document.getElementById('annual-body');
-
-    if (yearShifts.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="no-data-row">No shifts recorded for ${annualYear}.</td></tr>`;
-      return;
-    }
-
-    const mm = {};
-    for (let i = 0; i < 12; i++) mm[i] = { shifts: 0, hours: 0, tips: 0 };
-    yearShifts.forEach(s => {
-      const mo = parseInt(s.date.slice(5, 7)) - 1;
-      mm[mo].shifts++;
-      mm[mo].hours += s.hours;
-      mm[mo].tips  += s.tips;
-    });
-
-    let bestMo = -1, bestPay = -1;
-    for (let i = 0; i < 12; i++) {
-      const pay = mm[i].tips + mm[i].hours * WAGE;
-      if (mm[i].shifts > 0 && pay > bestPay) { bestPay = pay; bestMo = i; }
-    }
-
-    const maxPay = bestPay || 1;
-
-    let rows = '';
-    for (let i = 0; i < 12; i++) {
-      const m    = mm[i];
-      const wage = m.hours * WAGE;
-      const pay  = m.tips + wage;
-      const tph  = m.hours > 0 ? m.tips / m.hours : 0;
-      const isBest = i === bestMo;
-      const barW = m.shifts > 0 ? Math.round((pay / maxPay) * 72) : 0;
-
-      if (m.shifts === 0) {
-        rows += `<tr>
-          <td class="td-date" style="color:var(--text-muted)">${SHORT_MONTHS[i]}</td>
-          <td class="td-muted">—</td>
-          <td class="td-muted">—</td>
-          <td class="td-muted">—</td>
-          <td class="td-muted" style="text-align:right">—</td>
-        </tr>`;
-      } else {
-        rows += `<tr class="${isBest ? 'best-month' : ''}">
-          <td class="td-date">${SHORT_MONTHS[i]}${isBest ? ' ★' : ''}</td>
-          <td class="td-muted">${m.shifts}</td>
-          <td class="td-muted">${fmtH(m.hours)}</td>
-          <td class="td-muted">${fmt$(tph)}</td>
-          <td class="td-total ann-total">
-            <div class="month-bar-wrap">
-              <div class="month-bar" style="width:${barW}px"></div>
-              ${fmt$(pay)}
-            </div>
-          </td>
-        </tr>`;
-      }
-    }
-
-    const totWage = ytdHours * WAGE;
-    rows += `<tr class="total-row">
-      <td class="td-date">Total</td>
-      <td>${yearShifts.length}</td>
-      <td>${fmtH(ytdHours)}</td>
-      <td>${fmt$(ytdTph)}</td>
-      <td style="text-align:right; color:var(--accent)">${fmt$(ytdTips + totWage)}</td>
-    </tr>`;
-
-    tbody.innerHTML = rows;
-  }
-
+  // ── Toast ─────────────────────────────────────────────────
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
     clearTimeout(t._t);
-    t._t = setTimeout(() => t.classList.remove('show'), 2800);
+    t._t = setTimeout(() => t.classList.remove('show'), 2600);
   }
 
   render();
