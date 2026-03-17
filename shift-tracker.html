@@ -110,7 +110,7 @@
     border: none;
     padding: 8px 0;
     font-family: 'Figtree', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.92rem;
     font-weight: 500;
     color: var(--text-muted);
     cursor: pointer;
@@ -459,14 +459,15 @@
     flex-direction: column;
     gap: 3px;
     min-width: 0;
+    padding-left: 10px;
   }
   .shift-hours {
-    font-size: 0.84rem;
+    font-size: 0.94rem;
     font-weight: 600;
     color: var(--text);
   }
   .shift-wage {
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 500;
     color: var(--text-muted);
   }
@@ -491,7 +492,7 @@
 
   .shift-total-block { text-align: right; }
   .shift-total {
-    font-size: 0.92rem;
+    font-size: 1.02rem;
     font-weight: 700;
     color: var(--text);
     white-space: nowrap;
@@ -545,38 +546,78 @@
     text-align: center;
   }
 
-  /* YTD stats — horizontal compact strip */
-  .ytd-strip {
+  /* YTD stats — hero card layout matching monthly pattern */
+  .ytd-summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--r-xl);
-    overflow: hidden;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     margin-bottom: 20px;
   }
-  .ytd-cell {
-    padding: 14px 12px;
-    border-right: 1px solid var(--border);
-    text-align: center;
+  .ytd-hero {
+    grid-column: 1 / -1;
+    background: var(--accent);
+    border-radius: var(--r-xl);
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
   }
-  .ytd-cell:last-child { border-right: none; }
-  .ytd-cell-label {
-    font-size: 0.6rem;
+  .ytd-hero::after {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+  .ytd-hero-label {
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 4px;
+  }
+  .ytd-hero-value {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2.8rem;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .ytd-hero-sub {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    margin-top: 5px;
+  }
+  .ytd-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 16px 18px;
+  }
+  .ytd-card-label {
+    font-size: 0.64rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--text-subtle);
-    margin-bottom: 5px;
+    margin-bottom: 6px;
   }
-  .ytd-cell-value {
+  .ytd-card-value {
     font-family: 'Instrument Serif', serif;
-    font-size: 1.2rem;
+    font-size: 1.55rem;
     color: var(--text);
     line-height: 1;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
   }
-  .ytd-cell.highlight .ytd-cell-value { color: var(--accent); }
+  .ytd-card-sub {
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: var(--text-subtle);
+    margin-top: 4px;
+  }
+  .ytd-card.full { grid-column: 1 / -1; }
 
   /* Bar chart */
   .chart-wrap {
@@ -689,7 +730,7 @@
   .month-row.empty { opacity: 0.45; }
 
   .month-row-name {
-    font-size: 0.82rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: var(--text);
   }
@@ -702,7 +743,7 @@
     flex-wrap: wrap;
   }
   .month-stat {
-    font-size: 0.75rem;
+    font-size: 0.84rem;
     font-weight: 500;
     color: var(--text-muted);
   }
@@ -710,17 +751,28 @@
     font-weight: 600;
     color: var(--text);
   }
+  /* Fixed-width slots for annual row alignment */
+  .ms-shifts {
+    display: inline-block;
+    width: 3.2ch;   /* room for "999" */
+    text-align: right;
+  }
+  .ms-hours {
+    display: inline-block;
+    width: 4.8ch;   /* room for "999.9" */
+    text-align: right;
+  }
 
   .month-row-pay {
     font-family: 'Instrument Serif', serif;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     letter-spacing: -0.2px;
     color: var(--text);
     white-space: nowrap;
     text-align: right;
   }
   .month-row.best .month-row-pay { color: var(--accent); }
-  .month-row.total .month-row-pay { color: var(--accent); font-size: 1.1rem; }
+  .month-row.total .month-row-pay { color: var(--accent); font-size: 1.2rem; }
 
   /* ══════════════════════════════════════════
      DATA TAB — settings-list style
@@ -936,11 +988,8 @@
      RESPONSIVE
   ══════════════════════════════════════════ */
   @media (max-width: 400px) {
-    .ytd-strip { grid-template-columns: repeat(2, 1fr); }
-    .ytd-cell:nth-child(2) { border-right: none; }
-    .ytd-cell:nth-child(3) { border-top: 1px solid var(--border); }
-    .ytd-cell:nth-child(4) { border-top: 1px solid var(--border); border-right: none; }
     .stat-hero-value { font-size: 2.2rem; }
+    .ytd-hero-value  { font-size: 2.2rem; }
   }
 </style>
 </head>
@@ -1063,23 +1112,27 @@
     <button class="month-nav-btn" onclick="nextYear()">&#8594;</button>
   </div>
 
-  <!-- YTD strip -->
-  <div class="ytd-strip">
-    <div class="ytd-cell">
-      <div class="ytd-cell-label">Shifts</div>
-      <div class="ytd-cell-value" id="ytd-shifts">0</div>
+  <!-- YTD hero cards -->
+  <div class="ytd-summary-grid">
+    <div class="ytd-hero">
+      <div class="ytd-hero-label">Total Pay</div>
+      <div class="ytd-hero-value" id="ytd-total">$0</div>
+      <div class="ytd-hero-sub">tips + $2.15/hr wage</div>
     </div>
-    <div class="ytd-cell">
-      <div class="ytd-cell-label">Hours</div>
-      <div class="ytd-cell-value" id="ytd-hours">0</div>
+    <div class="ytd-card">
+      <div class="ytd-card-label">Shifts</div>
+      <div class="ytd-card-value" id="ytd-shifts">0</div>
+      <div class="ytd-card-sub">this year</div>
     </div>
-    <div class="ytd-cell">
-      <div class="ytd-cell-label">Tips/Hr</div>
-      <div class="ytd-cell-value" id="ytd-tph">$0</div>
+    <div class="ytd-card">
+      <div class="ytd-card-label">Hours</div>
+      <div class="ytd-card-value" id="ytd-hours">0</div>
+      <div class="ytd-card-sub">worked</div>
     </div>
-    <div class="ytd-cell highlight">
-      <div class="ytd-cell-label">Total Pay</div>
-      <div class="ytd-cell-value" id="ytd-total">$0</div>
+    <div class="ytd-card full">
+      <div class="ytd-card-label">Avg Tips / Hr</div>
+      <div class="ytd-card-value" id="ytd-tph">$0</div>
+      <div class="ytd-card-sub">tip income only</div>
     </div>
   </div>
 
@@ -1146,7 +1199,7 @@
   const MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const fmt$  = n => '$' + n.toFixed(2);
   const fmtH  = n => n % 1 === 0 ? n + 'h' : n.toFixed(2) + 'h';
-  const fmtH2 = n => n % 1 === 0 ? n.toString() : n.toFixed(2);
+  const fmtH2 = n => n.toFixed(1);   // always 1 decimal for annual alignment
 
   let shifts = JSON.parse(localStorage.getItem('shifts') || '[]');
   let viewYear, viewMonth, annualYear;
@@ -1391,8 +1444,8 @@
       return `<div class="month-row ${isBest ? 'best' : ''}">
         <div class="month-row-name">${MONTHS_SHORT[i]}${isBest ? ' ★' : ''}</div>
         <div class="month-row-stats">
-          <span class="month-stat"><strong>${m.shifts}</strong> shifts</span>
-          <span class="month-stat"><strong>${fmtH2(m.hours)}</strong>h</span>
+          <span class="month-stat"><strong><span class="ms-shifts">${m.shifts}</span></strong> shifts</span>
+          <span class="month-stat"><strong><span class="ms-hours">${fmtH2(m.hours)}</span></strong>h</span>
           <span class="month-stat">${fmt$(tph)}/hr</span>
         </div>
         <div class="month-row-pay">${fmt$(pay)}</div>
@@ -1403,8 +1456,8 @@
     rows += `<div class="month-row total">
       <div class="month-row-name">Total</div>
       <div class="month-row-stats">
-        <span class="month-stat"><strong>${yearShifts.length}</strong> shifts</span>
-        <span class="month-stat"><strong>${fmtH2(ytdHours)}</strong>h</span>
+        <span class="month-stat"><strong><span class="ms-shifts">${yearShifts.length}</span></strong> shifts</span>
+        <span class="month-stat"><strong><span class="ms-hours">${fmtH2(ytdHours)}</span></strong>h</span>
       </div>
       <div class="month-row-pay">${fmt$(ytdTips + ytdWage)}</div>
     </div>`;
