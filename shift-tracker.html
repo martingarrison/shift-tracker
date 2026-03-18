@@ -216,7 +216,7 @@
     border-radius: var(--r-sm);
     padding: 11px 13px;
     font-family: 'Figtree', sans-serif;
-    font-size: 0.94rem;
+    font-size: 16px; /* 16px min prevents iOS zoom on focus */
     font-weight: 500;
     color: var(--text);
     outline: none;
@@ -227,7 +227,7 @@
     overflow: hidden;
   }
   input[type="date"] {
-    font-size: 0.84rem; /* slightly smaller so mm/dd/yyyy fits comfortably */
+    font-size: 16px; /* 16px min prevents iOS zoom on focus */
     padding-right: 8px;
   }
   .field input:focus {
@@ -408,6 +408,9 @@
     gap: 6px;
   }
 
+  /* ══════════════════════════════════════════
+     SHIFT ACTION SHEET  — long-press edit/delete
+  ══════════════════════════════════════════ */
   .shift-row {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -417,10 +420,63 @@
     grid-template-columns: auto 1fr auto auto;
     align-items: center;
     gap: 0 14px;
-    transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease;
+    transition: background var(--dur-fast) ease, border-color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
     cursor: default;
     position: relative;
     overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .shift-row.pressing {
+    transform: scale(0.97);
+    background: var(--accent-light);
+    border-color: rgba(var(--accent-rgb), 0.25);
+  }
+
+  .action-sheet-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px 0 16px;
+  }
+
+  /* Edit form inside the action sheet */
+  .sheet-edit-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .sheet-field { display: flex; flex-direction: column; gap: 5px; }
+  .sheet-field.full { grid-column: 1 / -1; }
+  .sheet-field label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .sheet-field input {
+    background: var(--surface-2);
+    border: 1.5px solid transparent;
+    border-radius: var(--r-sm);
+    padding: 11px 13px;
+    font-family: 'Figtree', sans-serif;
+    font-size: 16px; /* prevent iOS zoom */
+    font-weight: 500;
+    color: var(--text);
+    outline: none;
+    transition: border-color var(--dur-fast) ease, background var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+    width: 100%;
+  }
+  .sheet-field input[type="date"] { padding-right: 8px; }
+  .sheet-field input:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
   }
   .shift-row::before {
     content: '';
@@ -1024,6 +1080,33 @@
   </div>
 </div>
 
+<!-- SHIFT ACTION SHEET -->
+<div class="modal-bg" id="shift-action-sheet">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="action-sheet-label" id="sheet-shift-label">Shift</div>
+    <div class="sheet-edit-form" id="sheet-edit-form">
+      <div class="sheet-field full">
+        <label>Date</label>
+        <input type="date" id="sheet-date">
+      </div>
+      <div class="sheet-field">
+        <label>Hours Worked</label>
+        <input type="number" id="sheet-hours" min="0" max="24" step="0.25" placeholder="6.5">
+      </div>
+      <div class="sheet-field">
+        <label>Tips Earned ($)</label>
+        <input type="number" id="sheet-tips" min="0" step="0.01" placeholder="87.50">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-modal primary" onclick="saveSheetEdit()">Save Changes</button>
+      <button class="btn-modal danger"  onclick="deleteSheetShift()">Delete Shift</button>
+      <button class="btn-modal ghost"   onclick="closeShiftSheet()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MONTHLY TAB ══ -->
 <div id="tab-shifts" class="tab-panel active">
 <div class="page">
@@ -1350,7 +1433,7 @@
       const wage    = s.hours * WAGE;
       const tphS    = s.hours > 0 ? s.tips / s.hours : 0;
       const total   = s.tips + wage;
-      return `<div class="shift-row" style="animation-delay:${i * 35}ms">
+      return `<div class="shift-row" style="animation-delay:${i * 35}ms" data-id="${s.id}" oncontextmenu="openShiftSheet(${s.id});return false;">
         <div class="shift-date-block">
           <div class="shift-day">${day}</div>
           <div class="shift-mon">${mon}</div>
@@ -1366,7 +1449,6 @@
         <div class="shift-total-block">
           <div class="shift-total">${fmt$(total)}</div>
         </div>
-        <button class="shift-del" onclick="deleteShift(${s.id})" title="Remove">✕</button>
       </div>`;
     }).join('');
   }
@@ -1578,6 +1660,99 @@
     clearTimeout(t._t);
     t._t = setTimeout(() => t.classList.remove('show'), 2600);
   }
+
+  // ── Shift action sheet (long-press) ──────────────────────
+  let sheetShiftId = null;
+
+  function openShiftSheet(id) {
+    const s = shifts.find(s => s.id === id);
+    if (!s) return;
+    sheetShiftId = id;
+    const d = new Date(s.date + 'T00:00:00');
+    const label = `${MONTHS_LONG[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+    document.getElementById('sheet-shift-label').textContent = label;
+    document.getElementById('sheet-date').value  = s.date;
+    document.getElementById('sheet-hours').value = s.hours;
+    document.getElementById('sheet-tips').value  = s.tips.toFixed(2);
+    document.getElementById('shift-action-sheet').classList.add('show');
+  }
+
+  function closeShiftSheet() {
+    document.getElementById('shift-action-sheet').classList.remove('show');
+    sheetShiftId = null;
+  }
+
+  function saveSheetEdit() {
+    if (sheetShiftId === null) return;
+    const date  = document.getElementById('sheet-date').value;
+    const hours = parseFloat(document.getElementById('sheet-hours').value);
+    const tips  = parseFloat(document.getElementById('sheet-tips').value);
+    if (!date)                      return showToast('Please enter a date.');
+    if (isNaN(hours) || hours <= 0) return showToast('Enter valid hours.');
+    if (isNaN(tips)  || tips  < 0)  return showToast('Enter valid tips.');
+    const idx = shifts.findIndex(s => s.id === sheetShiftId);
+    if (idx === -1) return;
+    shifts[idx] = { ...shifts[idx], date, hours, tips };
+    shifts.sort((a, b) => a.date.localeCompare(b.date));
+    persist(); render();
+    closeShiftSheet();
+    showToast('Shift updated ✓');
+  }
+
+  function deleteSheetShift() {
+    if (sheetShiftId === null) return;
+    shifts = shifts.filter(s => s.id !== sheetShiftId);
+    persist(); render();
+    closeShiftSheet();
+    showToast('Shift removed.');
+  }
+
+  // Wire long-press on shift list (touch + mouse)
+  (function() {
+    let pressTimer = null;
+    let pressTarget = null;
+
+    function getShiftRow(el) {
+      return el.closest ? el.closest('.shift-row') : null;
+    }
+    function startPress(row) {
+      row.classList.add('pressing');
+      pressTarget = row;
+      pressTimer = setTimeout(() => {
+        row.classList.remove('pressing');
+        const id = parseInt(row.dataset.id);
+        if (!isNaN(id)) openShiftSheet(id);
+        pressTimer = null;
+        pressTarget = null;
+      }, 500);
+    }
+    function cancelPress() {
+      if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+      if (pressTarget) { pressTarget.classList.remove('pressing'); pressTarget = null; }
+    }
+
+    const list = document.getElementById('shift-list');
+    // Touch
+    list.addEventListener('touchstart', e => {
+      const row = getShiftRow(e.target);
+      if (row) startPress(row);
+    }, { passive: true });
+    list.addEventListener('touchend',   cancelPress, { passive: true });
+    list.addEventListener('touchmove',  cancelPress, { passive: true });
+    // Mouse (desktop): right-click via oncontextmenu; left long-press
+    list.addEventListener('mousedown', e => {
+      if (e.button !== 0) return;
+      const row = getShiftRow(e.target);
+      if (row) startPress(row);
+    });
+    list.addEventListener('mouseup',    cancelPress);
+    list.addEventListener('mouseleave', cancelPress);
+
+    // Tap backdrop to dismiss
+    document.getElementById('shift-action-sheet').addEventListener('click', e => {
+      if (e.target.id === 'shift-action-sheet') closeShiftSheet();
+    });
+  })();
 
   render();
 </script>
